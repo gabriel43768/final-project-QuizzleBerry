@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Quizzleberry</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to the updated CSS -->
+</head>
+<body>
+    <header>
+        <h1>Welcome to Quizzleberry!</h1>
+        <p>Your fun quiz platform for learning and competition!</p>
+    </header>
+    <main>
+        <div class="container text-center">
+            <h2 class="display-4 my-5">Discover What Makes Quizzleberry Fun!</h2>
+            <div class="row">
+                <div class="col-md-4 feature">
+                    <h3>Variety of Topics</h3>
+                    <p>Select quizzes from various subjects!</p>
+                    <button class="btn btn-primary" onclick="alert('Choose your topic!')">Select Topic</button>
+                </div>
+                <div class="col-md-4 feature">
+                    <h3>Timer</h3>
+                    <p>Each quiz has a built-in timer!</p>
+                    <button class="btn btn-primary" onclick="startTimer()">Start Timer</button>
+                    <p id="timerDisplay"></p>
+                </div>
+                <div class="col-md-4 feature">
+                    <h3>Score Tracking</h3>
+                    <p>Get immediate feedback on your performance!</p>
+                    <button class="btn btn-primary" onclick="showScore()">Show Score</button>
+                    <p id="scoreDisplay"></p>
+                </div>
+            </div>
+            <div class="row mt-4"> <!-- Added margin-top for spacing -->
+                <div class="col-md-4 feature">
+                    <h3>Leaderboard</h3>
+                    <p>Check out the top performers!</p>
+                    <button class="btn btn-primary" onclick="showLeaderboard()">View Leaderboard</button>
+                    <p id="leaderboardDisplay"></p>
+                </div>
+                <div class="col-md-4 feature">
+                    <h3>User Registration</h3>
+                    <p>Create an account to save your progress!</p>
+                    <button class="btn btn-primary" onclick="alert('Registration feature coming soon!')">Register</button>
+                </div>
+                <div class="col-md-4 feature">
+                    <h3>Admin Dashboard</h3>
+                    <p>Manage quizzes and view analytics!</p>
+                    <button class="btn btn-primary" onclick="alert('Admin feature coming soon!')">Admin Dashboard</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container text-center">
+            <p>&copy; 2025 Quizzleberry. All rights reserved.</p>
+        </div>
+    </footer>
+ 
