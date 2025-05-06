@@ -1,0 +1,2651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Library - Quizzleberry</title>
+    <style>
+        :root {
+            --primary: #4b2c91;
+            --primary-light: #9747ff;
+            --primary-dark: #3a2170;
+            --secondary: #10b981;
+            --light-bg: #f8f9fa;
+            --border: #e5e7eb;
+            --text: #333;
+            --text-light: #6b7280;
+            --white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background-color: var(--white);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+        
+        .sidebar-logo {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            padding: 0 1rem;
+        }
+        
+        .sidebar-nav-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-nav-link:hover, .sidebar-nav-link.active {
+            background-color: rgba(151, 71, 255, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-nav-link i {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+        
+        .user-name {
+            font-weight: 500;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 240px;
+            padding: 2rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+        
+        .create-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 9999px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .create-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .create-btn i {
+            margin-right: 0.5rem;
+        }
+        
+        /* Library Tabs */
+        .library-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+        
+        .tab {
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+            color: var(--text-light);
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Card Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .card {
+            background-color: var(--white);
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            padding: 1.5rem;
+            color: var(--white);
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-subtitle {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .card-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .card-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            background-color: var(--white);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .card-btn:hover {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+        
+        .card-btn.primary {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+        
+        .card-btn.primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background-color: var(--white);
+            border-radius: 0.75rem;
+        }
+        
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-light);
+        }
+        
+        .empty-state-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+        
+        .empty-state-text {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background-color: var(--white);
+            border-radius: 0.75rem;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        /* Make the modal wider when in flashcard creation view */
+        .modal.flashcard-mode {
+            max-width: 1000px;
+        }
+
+        /* Make the modal wider when in study guide view */
+        .modal.study-guide-mode {
+            max-width: 1000px;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        /* Option Cards */
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .option-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .option-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .option-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .option-icon {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        .option-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .option-description {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        /* Tabs */
+        .tabs {
+            margin-top: 1.5rem;
+        }
+        
+        .tab-list {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab-trigger {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        
+        .tab-trigger.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            font-size: 1rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(75, 44, 145, 0.2);
+        }
+        
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--primary-light);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            background-color: rgba(151, 71, 255, 0.05);
+            margin-bottom: 1.5rem;
+        }
+        
+        .upload-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .upload-text {
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        
+        .upload-input {
+            display: none;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--light-bg);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .btn-icon {
+            margin-right: 0.5rem;
+        }
+        
+        /* Study Guide Styles */
+        .study-guide-container {
+            padding: 0;
+        }
+
+        .study-guide-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .study-guide-tab {
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .study-guide-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .study-guide-content {
+            padding: 1.5rem;
+        }
+
+        .study-guide-tab-content {
+            display: none;
+        }
+
+        .study-guide-tab-content.active {
+            display: block;
+        }
+
+        .study-guide-textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+
+        .study-guide-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(75, 44, 145, 0.2);
+        }
+
+        .character-counter {
+            text-align: right;
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-files-container {
+            border: 2px dashed var(--border);
+            border-radius: 0.5rem;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-files-container:hover {
+            border-color: var(--primary);
+            background-color: rgba(151, 71, 255, 0.05);
+        }
+
+        .upload-files-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-files-icon {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .upload-files-text {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-files-subtext {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .browse-files-btn {
+            background-color: var(--white);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .browse-files-btn:hover {
+            background-color: var(--light-bg);
+            border-color: var(--primary);
+        }
+
+        .flashcard-set-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .flashcard-set-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--light-bg);
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: var(--primary);
+        }
+
+        .flashcard-set-info {
+            flex: 1;
+        }
+
+        .flashcard-set-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .flashcard-set-meta {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .flashcard-set-add {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--white);
+            border: 1px solid var(--border);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .flashcard-set-add:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .search-flashcard-sets {
+            font-size: 0.875rem;
+            color: var(--primary);
+            text-decoration: none;
+            display: block;
+            margin-top: 1rem;
+            cursor: pointer;
+        }
+
+        .search-flashcard-sets:hover {
+            text-decoration: underline;
+        }
+
+        .study-guide-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .study-guide-disclaimer {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            max-width: 70%;
+        }
+
+        .generate-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 0.375rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .generate-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .additional-output {
+            margin-top: 2rem;
+        }
+
+        .additional-output-title {
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .additional-output-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .additional-output-icon {
+            width: 32px;
+            height: 32px;
+            background-color: var(--light-bg);
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            color: var(--primary);
+        }
+
+        .additional-output-text {
+            font-size: 0.875rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .py-8 {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .inline-block {
+            display: inline-block;
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .rounded-full {
+            border-radius: 9999px;
+        }
+
+        .bg-light-bg {
+            background-color: var(--light-bg);
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .text-3xl {
+            font-size: 1.875rem;
+        }
+
+        .text-text-light {
+            color: var(--text-light);
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        /* Back Button */
+        .back-button-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .back-button {
+            margin-right: 1rem;
+        }
+
+        /* Flashcard Method Styles */
+        .flashcard-method-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .flashcard-method-card {
+            background-color: #2d3748;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: var(--white);
+        }
+
+        .flashcard-method-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        .flashcard-method-icon {
+            font-size: 2.5rem;
+            color: var(--primary-light);
+            margin-bottom: 1rem;
+        }
+
+        .flashcard-method-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        /* Flashcard Creation Styles */
+        .flashcard-creation-container {
+            background-color: var(--white);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .flashcard-creation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .flashcard-creation-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .flashcard-creation-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .flashcard-set-info {
+            margin-bottom: 1.5rem;
+        }
+
+        .flashcard-toolbar {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .flashcard-toolbar-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid var(--border);
+            background-color: var(--white);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .flashcard-toolbar-button:hover {
+            background-color: var(--light-bg);
+        }
+
+        .flashcard-card {
+            background-color: var(--light-bg);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .flashcard-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .flashcard-card-number {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .flashcard-card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .flashcard-card-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .flashcard-field {
+            position: relative;
+        }
+
+        .flashcard-field-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+
+        .flashcard-image-upload {
+            border: 1px dashed var(--border);
+            border-radius: 0.375rem;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-top: 1rem;
+        }
+
+        .flashcard-image-upload:hover {
+            border-color: var(--primary);
+        }
+
+        .flashcard-image-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .flashcard-image-text {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .add-card-button {
+            background-color: transparent;
+            border: 1px dashed var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            color: var(--primary);
+            font-weight: 500;
+            transition: background-color 0.2s, border-color 0.2s;
+            margin-bottom: 1.5rem;
+        }
+
+        .add-card-button:hover {
+            background-color: rgba(151, 71, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        .flashcard-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* PDF Preview */
+        .pdf-preview {
+            margin-top: 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .pdf-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .pdf-preview-title {
+            font-weight: 600;
+        }
+        
+        .pdf-preview-content {
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        
+        .pdf-preview-page {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed var(--border);
+        }
+        
+        .pdf-preview-page:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 1rem;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar-nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 0.5rem 0;
+            }
+            
+            .sidebar-nav-item {
+                margin-right: 0.5rem;
+                margin-bottom: 0;
+            }
+            
+            .sidebar-footer {
+                display: none;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .library-tabs {
+                overflow-x: auto;
+                width: 100%;
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .option-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal {
+                width: 90%;
+            }
+            
+            .flashcard-card-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Icons (using Unicode for simplicity) */
+        .icon {
+            font-style: normal;
+            font-family: sans-serif;
+        }
+    </style>
+    <!-- PDF.js library for PDF processing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="111.png" alt="Quizzleberry Logo" class="sidebar-logo">
+            <div class="sidebar-brand">Quizzleberry</div>
+        </div>
+        
+        <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+                <a href="dashboard.html" class="sidebar-nav-link">
+                    <i class="icon">🏠</i> Home
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="library.html" class="sidebar-nav-link active">
+                    <i class="icon">📚</i> My Library
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="settings.html" class="sidebar-nav-link">
+                    <i class="icon">⚙️</i> Settings
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">D</div>
+                <div class="user-name">Demo User</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1 class="page-title">My Library</h1>
+            
+            <button class="create-btn" id="create-quiz-btn">
+                <i class="icon">➕</i> Create New
+            </button>
+        </div>
+        
+        <!-- Library Tabs -->
+        <div class="library-tabs">
+            <div class="tab active" onclick="switchTab('all-content')">All</div>
+            <div class="tab" onclick="switchTab('flashcards-content')">Flashcards</div>
+            <div class="tab" onclick="switchTab('study-guides-content')">Study Guides</div>
+            <div class="tab" onclick="switchTab('practice-tests-content')">Practice Tests</div>
+        </div>
+        
+        <!-- All Content Tab -->
+        <div id="all-content" class="tab-content active">
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Science Quiz</h3>
+                        <div class="card-subtitle">Biology, Chemistry, Physics</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">42</div>
+                                <div class="stat-label">Questions</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">75%</div>
+                                <div class="stat-label">Mastered</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">3</div>
+                                <div class="stat-label">Days Streak</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Study</button>
+                            <button class="card-btn primary">Quiz</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Math Challenge</h3>
+                        <div class="card-subtitle">Algebra, Geometry, Calculus</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">35</div>
+                                <div class="stat-label">Questions</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">40%</div>
+                                <div class="stat-label">Mastered</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">1</div>
+                                <div class="stat-label">Days Streak</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Study</button>
+                            <button class="card-btn primary">Quiz</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">History Facts</h3>
+                        <div class="card-subtitle">Ancient, Medieval, Modern</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">50</div>
+                                <div class="stat-label">Questions</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">90%</div>
+                                <div class="stat-label">Mastered</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">7</div>
+                                <div class="stat-label">Days Streak</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Study</button>
+                            <button class="card-btn primary">Quiz</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Geography</h3>
+                        <div class="card-subtitle">Countries, Capitals, Landmarks</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">28</div>
+                                <div class="stat-label">Questions</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">10%</div>
+                                <div class="stat-label">Mastered</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Days Streak</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Study</button>
+                            <button class="card-btn primary">Quiz</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Flashcards Tab -->
+        <div id="flashcards-content" class="tab-content">
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Biology Terms</h3>
+                        <div class="card-subtitle">Cell Biology, Genetics, Ecology</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">65</div>
+                                <div class="stat-label">Cards</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">60%</div>
+                                <div class="stat-label">Mastered</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">2</div>
+                                <div class="stat-label">Days Streak</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Study</button>
+                            <button class="card-btn primary">Practice</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Spanish Vocabulary</h3>
+                        <div class="card-subtitle">Basic Words, Phrases, Grammar</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">120</div>
+                                <div class="stat-label">Cards</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">45%</div>
+                                <div class="stat-label">Mastered</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">5</div>
+                                <div class="stat-label">Days Streak</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Study</button>
+                            <button class="card-btn primary">Practice</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Study Guides Tab -->
+        <div id="study-guides-content" class="tab-content">
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Physics Fundamentals</h3>
+                        <div class="card-subtitle">Mechanics, Thermodynamics, Waves</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">15</div>
+                                <div class="stat-label">Pages</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">80%</div>
+                                <div class="stat-label">Complete</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">3</div>
+                                <div class="stat-label">Days Ago</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">View</button>
+                            <button class="card-btn primary">Edit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Practice Tests Tab -->
+        <div id="practice-tests-content" class="tab-content">
+            <div class="empty-state">
+                <div class="empty-state-icon">📝</div>
+                <h3 class="empty-state-title">No Practice Tests Yet</h3>
+                <p class="empty-state-text">Create your first practice test to start testing your knowledge</p>
+                <button class="btn btn-primary" id="create-test-btn">Create Practice Test</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Create Quiz Modal -->
+    <div class="modal-overlay" id="create-quiz-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Create New</h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Initial Options View -->
+                <div id="initial-options">
+                    <div class="option-grid">
+                        <div class="option-card" data-option="flashcards">
+                            <div class="option-header">
+                                <div class="option-icon">📝</div>
+                                <div>
+                                    <h4 class="option-title">Flashcard Set</h4>
+                                    <p class="option-description">Create digital flashcards for quick study sessions</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card" data-option="practice-test">
+                            <div class="option-header">
+                                <div class="option-icon">✅</div>
+                                <div>
+                                    <h4 class="option-title">Practice Test</h4>
+                                    <p class="option-description">Create quizzes with various question types</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Study Guide View -->
+                <div id="study-guide-view" style="display: none;">
+                    <div class="study-guide-container">
+                        <div class="study-guide-tabs">
+                            <div class="study-guide-tab active" data-tab="paste-text">Paste text</div>
+                            <div class="study-guide-tab" data-tab="upload-files">Upload files</div>
+                            <div class="study-guide-tab" data-tab="flashcard-sets">Flashcard sets</div>
+                        </div>
+                        
+                        <div class="study-guide-content">
+                            <!-- Paste Text Tab -->
+                            <div class="study-guide-tab-content active" id="paste-text-content">
+                                <textarea class="study-guide-textarea" placeholder="Put your notes here. We'll do the rest."></textarea>
+                                <div class="character-counter">0/100,000 characters</div>
+                                
+                                <div class="additional-output">
+                                    <div class="additional-output-title">From this upload, you'll also get</div>
+                                    <div class="additional-output-item">
+                                        <div class="additional-output-icon">📝</div>
+                                        <div class="additional-output-text">Flashcards: Memorize your material</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Upload Files Tab -->
+                            <div class="study-guide-tab-content" id="upload-files-content">
+                                <div class="upload-files-container">
+                                    <div class="upload-files-icons">
+                                        <div class="upload-files-icon">📄</div>
+                                        <div class="upload-files-icon">📊</div>
+                                        <div class="upload-files-icon">📝</div>
+                                    </div>
+                                    <div class="upload-files-text">Drag and drop notes, readings, lecture slides, etc.</div>
+                                    <div class="upload-files-subtext">Upload up to 2 files at a time up to 25MB (.docx, .pdf, .pptx)</div>
+                                    <input type="file" id="file-upload" class="upload-input" multiple accept=".docx,.pdf,.pptx">
+                                    <button class="browse-files-btn" id="browse-files-btn">Browse files</button>
+                                </div>
+                                
+                                <div class="additional-output">
+                                    <div class="additional-output-title">From this upload, you'll also get</div>
+                                    <div class="additional-output-item">
+                                        <div class="additional-output-icon">📝</div>
+                                        <div class="additional-output-text">Flashcards: Memorize your material</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Flashcard Sets Tab -->
+                            <div class="study-guide-tab-content" id="flashcard-sets-content">
+                                <div id="flashcard-sets-empty" class="text-center py-8">
+                                    <div class="text-center mb-4">
+                                        <div class="inline-block p-4 rounded-full bg-light-bg mb-2">
+                                            <div class="text-3xl">📝</div>
+                                        </div>
+                                        <p class="text-text-light">No flashcard sets available yet</p>
+                                        <p class="text-sm text-text-light mt-2">Create flashcard sets to use them in your study guides</p>
+                                    </div>
+                                </div>
+                                
+                                <div id="flashcard-sets-list" style="display: none;">
+                                    <!-- Flashcard sets will be dynamically added here -->
+                                </div>
+                                
+                                <a href="#" class="search-flashcard-sets">Search other recent flashcard sets</a>
+                            </div>
+                        </div>
+                        
+                        <div class="study-guide-footer">
+                            <div class="study-guide-disclaimer">
+                                This product is enhanced by AI and may provide incorrect or problematic content. Do not enter personal data.
+                            </div>
+                            <button class="generate-btn">Generate</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Practice Test View -->
+                <div id="practice-test-view" style="display: none;">
+                    <div class="back-button-container">
+                        <button class="btn btn-outline btn-sm back-button" data-target="initial-options">
+                            <span class="icon">←</span> Back
+                        </button>
+                        <h3>Generate a practice test</h3>
+                    </div>
+                    
+                    <p class="ai-results-subtitle">Choose or upload materials to generate practice questions designed for you</p>
+                    
+                    <div class="study-guide-container">
+                        <div class="study-guide-tabs">
+                            <div class="study-guide-tab active" data-tab="flashcard-sets-test">Flashcard sets</div>
+                            <div class="study-guide-tab" data-tab="upload-files-test">Upload files</div>
+                            <div class="study-guide-tab" data-tab="paste-text-test">Paste text</div>
+                        </div>
+                        
+                        <div class="study-guide-content">
+                            <!-- Flashcard Sets Tab -->
+                            <div class="study-guide-tab-content active" id="flashcard-sets-test-content">
+                                <div id="test-flashcard-sets-list">
+                                    <!-- Flashcard sets will be dynamically added here -->
+                                    </div>
+                                </div>
+                                
+                                <a href="#" class="search-flashcard-sets">Search other recent flashcard sets</a>
+                            </div>
+                            
+                            <!-- Upload Files Tab -->
+                            <div class="study-guide-tab-content" id="upload-files-test-content">
+                                <div class="upload-files-container">
+                                    <div class="upload-files-icons">
+                                        <div class="upload-files-icon">📄</div>
+                                        <div class="upload-files-icon">📊</div>
+                                        <div class="upload-files-icon">📝</div>
+                                    </div>
+                                    <div class="upload-files-text">Drag and drop notes, readings, lecture slides, etc.</div>
+                                    <div class="upload-files-subtext">Supported file types are .docx, .pdf, .pptx</div>
+                                    <input type="file" id="test-file-upload" class="upload-input" multiple accept=".docx,.pdf,.pptx">
+                                    <button class="browse-files-btn" id="test-browse-files-btn">Browse files</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Paste Text Tab -->
+                            <div class="study-guide-tab-content" id="paste-text-test-content">
+                                <textarea class="study-guide-textarea" placeholder="Put your notes here. We'll do the rest."></textarea>
+                                <div class="character-counter">0/100,000 characters</div>
+                            </div>
+                            
+                            <!-- Google Drive Tab -->
+                            <div class="study-guide-tab-content" id="google-drive-test-content">
+                                <div class="text-center py-8">
+                                    <div class="text-center mb-4">
+                                        <div class="inline-block p-4 rounded-full bg-light-bg mb-2">
+                                            <div class="text-3xl">📁</div>
+                                        </div>
+                                        <p class="text-text-light">Connect to Google Drive</p>
+                                        <p class="text-sm text-text-light mt-2">Import your documents from Google Drive</p>
+                                    </div>
+                                    <button class="btn btn-primary">Connect Google Drive</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="study-guide-footer">
+                            <div class="study-guide-disclaimer">
+                                This product is enhanced by AI and may provide incorrect or problematic content. Do not enter personal data.
+                            </div>
+                            <button class="generate-btn" id="generate-test-btn">Generate</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Flashcard Creation Method View -->
+                <div id="flashcard-method-view" style="display: none;">
+                    <div class="back-button-container">
+                        <button class="btn btn-outline btn-sm back-button" data-target="initial-options">
+                            <span class="icon">←</span> Back
+                        </button>
+                        <h3>How do you want to create your flashcard set?</h3>
+                    </div>
+                    
+                    <div class="flashcard-method-grid">
+                        <div class="flashcard-method-card" data-method="upload">
+                            <div class="flashcard-method-icon">📄</div>
+                            <h4 class="flashcard-method-title">Generate from an upload</h4>
+                        </div>
+                        
+                        <div class="flashcard-method-card" data-method="manual">
+                            <div class="flashcard-method-icon">⌨️</div>
+                            <h4 class="flashcard-method-title">Create them yourself</h4>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Upload View -->
+                <div id="upload-view" style="display: none;">
+                    <div class="back-button-container">
+                        <button class="btn btn-outline btn-sm back-button" data-target="flashcard-method-view">
+                            <span class="icon">←</span> Back
+                        </button>
+                        <h3 id="upload-title">Upload Content</h3>
+                    </div>
+                    
+                    <p class="ai-results-subtitle">Our AI will analyze your document and organize it into study materials</p>
+                    
+                    <div class="upload-area" id="pdf-upload-area">
+                        <div class="upload-icon">📄</div>
+                        <p class="upload-text">Drag and drop your PDF or document here, or click to browse</p>
+                        <p class="upload-text" style="font-size: 0.875rem; color: var(--text-light);">Supported formats: PDF, DOCX, TXT</p>
+                        <input type="file" id="pdf-upload" class="upload-input" accept=".pdf,.docx,.txt">
+                        <button class="btn btn-primary" id="browse-pdf">Select File</button>
+                    </div>
+                    
+                    <div id="pdf-preview" class="pdf-preview" style="display: none;">
+                        <div class="pdf-preview-header">
+                            <h4 class="pdf-preview-title">Document Preview</h4>
+                            <span id="pdf-page-count"></span>
+                        </div>
+                        <div class="pdf-preview-content" id="pdf-preview-content">
+                            <!-- PDF content will be displayed here -->
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-block" id="analyze-pdf" style="display: none;">Analyze with AI</button>
+                </div>
+                
+                <!-- Flashcard Creation View -->
+                <div id="flashcard-creation-view" style="display: none;">
+                    <div class="flashcard-creation-header">
+                        <h3 class="flashcard-creation-title">Create a new flashcard set</h3>
+                        <div class="flashcard-creation-actions">
+                            <button class="btn btn-outline" id="cancel-flashcard">Cancel</button>
+                            <button class="btn btn-primary" id="create-flashcard">Create</button>
+                            <button class="btn btn-primary" id="create-practice-flashcard">Create and practice</button>
+                        </div>
+                    </div>
+                    
+                    <div class="flashcard-set-info">
+                        <div class="form-group">
+                            <label class="form-label" for="flashcard-set-title">Title</label>
+                            <input type="text" id="flashcard-set-title" class="form-input" placeholder="Enter flashcard set title">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="flashcard-set-description">Description (optional)</label>
+                            <input type="text" id="flashcard-set-description" class="form-input" placeholder="Enter a description for your flashcard set">
+                        </div>
+                    </div>
+                    
+                    <div class="flashcard-toolbar">
+                        <button class="flashcard-toolbar-button" id="import-flashcards">
+                            <i class="icon">📥</i> Import
+                        </button>
+                        <button class="flashcard-toolbar-button" id="add-diagram">
+                            <i class="icon">📊</i> Add diagram
+                        </button>
+                        <button class="flashcard-toolbar-button" id="create-from-notes">
+                            <i class="icon">📝</i> Create from notes
+                        </button>
+                    </div>
+                    
+                    <div id="flashcard-cards-container">
+                        <!-- Flashcard 1 -->
+                        <div class="flashcard-card" data-card-id="1">
+                            <div class="flashcard-card-header">
+                                <div class="flashcard-card-number">1</div>
+                                <div class="flashcard-card-actions">
+                                    <button class="btn btn-sm btn-outline move-card-up" title="Move up">
+                                        <i class="icon">↑</i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline move-card-down" title="Move down">
+                                        <i class="icon">↓</i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline delete-card" title="Delete card">
+                                        <i class="icon">🗑️</i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flashcard-card-content">
+                                <div class="flashcard-field">
+                                    <div class="flashcard-field-label">Term</div>
+                                    <input type="text" class="form-input flashcard-term" placeholder="Enter term">
+                                </div>
+                                <div class="flashcard-field">
+                                    <div class="flashcard-field-label">Definition</div>
+                                    <input type="text" class="form-input flashcard-definition" placeholder="Enter definition">
+                                </div>
+                            </div>
+                            <div class="flashcard-image-upload" data-for="1">
+                                <div class="flashcard-image-icon">🖼️</div>
+                                <div class="flashcard-image-text">Image</div>
+                                <input type="file" class="upload-input flashcard-image-input" accept="image/*">
+                            </div>
+                        </div>
+                        
+                        <!-- Flashcard 2 -->
+                        <div class="flashcard-card" data-card-id="2">
+                            <div class="flashcard-card-header">
+                                <div class="flashcard-card-number">2</div>
+                                <div class="flashcard-card-actions">
+                                    <button class="btn btn-sm btn-outline move-card-up" title="Move up">
+                                        <i class="icon">↑</i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline move-card-down" title="Move down">
+                                        <i class="icon">↓</i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline delete-card" title="Delete card">
+                                        <i class="icon">🗑️</i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flashcard-card-content">
+                                <div class="flashcard-field">
+                                    <div class="flashcard-field-label">Term</div>
+                                    <input type="text" class="form-input flashcard-term" placeholder="Enter term">
+                                </div>
+                                <div class="flashcard-field">
+                                    <div class="flashcard-field-label">Definition</div>
+                                    <input type="text" class="form-input flashcard-definition" placeholder="Enter definition">
+                                </div>
+                            </div>
+                            <div class="flashcard-image-upload" data-for="2">
+                                <div class="flashcard-image-icon">🖼️</div>
+                                <div class="flashcard-image-text">Image</div>
+                                <input type="file" class="upload-input flashcard-image-input" accept="image/*">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="add-card-button" id="add-card-button">
+                        <i class="icon">➕</i> Add Card
+                    </button>
+                    
+                    <div class="flashcard-footer">
+                        <button class="btn btn-outline" id="cancel-flashcard-footer">Cancel</button>
+                        <button class="btn btn-primary" id="create-flashcard-footer">Create</button>
+                        <button class="btn btn-primary" id="create-practice-flashcard-footer">Create and practice</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Set up PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        
+        // Tab switching functionality
+        function switchTab(tabId) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Deactivate all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Activate the selected tab and content
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Modal functionality
+        const modal = document.getElementById('create-quiz-modal');
+        const createBtn = document.getElementById('create-quiz-btn');
+        const createTestBtn = document.getElementById('create-test-btn');
+        const closeBtn = document.getElementById('modal-close');
+        const modalBody = document.getElementById('modal-body');
+        const modalTitle = document.getElementById('modal-title');
+        const initialOptions = document.getElementById('initial-options');
+        const uploadView = document.getElementById('upload-view');
+        const uploadTitle = document.getElementById('upload-title');
+        const flashcardMethodView = document.getElementById('flashcard-method-view');
+        const flashcardCreationView = document.getElementById('flashcard-creation-view');
+        const studyGuideView = document.getElementById('study-guide-view');
+        const practiceTestView = document.getElementById('practice-test-view');
+        const backButtons = document.querySelectorAll('.back-button');
+        const optionCards = document.querySelectorAll('.option-card');
+        const methodCards = document.querySelectorAll('.flashcard-method-card');
+        const pdfUploadArea = document.getElementById('pdf-upload-area');
+        const pdfUpload = document.getElementById('pdf-upload');
+        const browsePdfBtn = document.getElementById('browse-pdf');
+        const pdfPreview = document.getElementById('pdf-preview');
+        const pdfPreviewContent = document.getElementById('pdf-preview-content');
+        const pdfPageCount = document.getElementById('pdf-page-count');
+        const analyzePdfBtn = document.getElementById('analyze-pdf');
+        const addCardButton = document.getElementById('add-card-button');
+        const flashcardCardsContainer = document.getElementById('flashcard-cards-container');
+        
+        let currentOption = '';
+        let uploadedFile = null;
+        let cardCounter = 3; // Start at 3 since we already have 2 cards
+        
+        // Open modal
+        createBtn.addEventListener('click', () => {
+            modal.classList.add('active');
+            // Reset to initial view
+            showView(initialOptions);
+            modalTitle.textContent = 'Create New';
+        });
+        
+        // Open modal from create test button
+        if (createTestBtn) {
+            createTestBtn.addEventListener('click', () => {
+                modal.classList.add('active');
+                showView(practiceTestView);
+                modalTitle.textContent = 'Generate Practice Test';
+            });
+        }
+        
+        // Close modal
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+            resetViews();
+        });
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                resetViews();
+            }
+        });
+        
+        // Show a specific view and hide others
+        function showView(viewToShow) {
+            console.log('Showing view:', viewToShow ? viewToShow.id : 'none');
+    
+            // Hide all views
+            initialOptions.style.display = 'none';
+            uploadView.style.display = 'none';
+            flashcardMethodView.style.display = 'none';
+            flashcardCreationView.style.display = 'none';
+            studyGuideView.style.display = 'none';
+            practiceTestView.style.display = 'none';
+            
+            // Show the requested view
+            if (viewToShow) {
+                viewToShow.style.display = 'block';
+        
+                // Add or remove flashcard-mode class based on the view
+                const modalElement = document.querySelector('.modal');
+                if (viewToShow === flashcardCreationView) {
+                    console.log('Adding flashcard-mode class');
+                    modalElement.classList.add('flashcard-mode');
+                    modalElement.classList.remove('study-guide-mode');
+                } else if (viewToShow === studyGuideView) {
+                    console.log('Adding study-guide-mode class');
+                    modalElement.classList.add('study-guide-mode');
+                    modalElement.classList.remove('flashcard-mode');
+                } else {
+                    console.log('Removing mode classes');
+                    modalElement.classList.remove('flashcard-mode');
+                    modalElement.classList.remove('study-guide-mode');
+                }
+            }
+        }
+        
+        // Reset views
+        function resetViews() {
+            if (pdfPreview) {
+                pdfPreview.style.display = 'none';
+            }
+            if (analyzePdfBtn) {
+                analyzePdfBtn.style.display = 'none';
+            }
+            if (pdfPreviewContent) {
+                pdfPreviewContent.innerHTML = '';
+            }
+            uploadedFile = null;
+        }
+        
+        // Handle option card clicks
+        optionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                currentOption = card.getAttribute('data-option');
+                console.log('Option clicked:', currentOption); // Add debugging
+                
+                if (currentOption === 'flashcards') {
+                    showView(flashcardMethodView);
+                    modalTitle.textContent = 'Create Flashcard Set';
+                } else if (currentOption === 'study-guide') {
+                    showView(studyGuideView);
+                    modalTitle.textContent = 'Generate Study Guides';
+                } else if (currentOption === 'practice-test') {
+                    showView(practiceTestView);
+                    modalTitle.textContent = 'Generate Practice Test';
+                } else {
+                    showView(uploadView);
+                    
+                    // Set the title based on the selected option
+                    const formattedOption = currentOption.replace('-', ' ');
+                    uploadTitle.textContent = `Upload content for ${formattedOption.charAt(0).toUpperCase() + formattedOption.slice(1)}`;
+                }
+            });
+        });
+        
+        // Handle flashcard method selection
+        methodCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const method = card.getAttribute('data-method');
+                console.log('Flashcard method selected:', method);
+        
+                if (method === 'manual') {
+                    showView(flashcardCreationView);
+                    modalTitle.textContent = 'Create a new flashcard set';
+                    document.querySelector('.modal').classList.add('flashcard-mode');
+                } else if (method === 'upload') {
+                    showView(uploadView);
+                    uploadTitle.textContent = 'Upload Content for Flashcards';
+                    document.querySelector('.modal').classList.remove('flashcard-mode');
+                }
+            });
+        });
+        
+        // Handle back buttons
+        backButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const target = button.getAttribute('data-target');
+                if (target === 'initial-options') {
+                    showView(initialOptions);
+                    modalTitle.textContent = 'Create New';
+                } else if (target === 'flashcard-method-view') {
+                    showView(flashcardMethodView);
+                }
+            });
+        });
+        
+        // Study Guide Tabs
+        const studyGuideTabs = document.querySelectorAll('.study-guide-tab');
+        studyGuideTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Find the parent container
+                const tabsContainer = tab.closest('.study-guide-tabs');
+                // Get all tabs in this container
+                const siblingTabs = tabsContainer.querySelectorAll('.study-guide-tab');
+                
+                // Remove active class from all tabs in this container
+                siblingTabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Get the tab content container
+                const contentContainer = tabsContainer.nextElementSibling;
+                
+                // Hide all tab content in this container
+                const tabContents = contentContainer.querySelectorAll('.study-guide-tab-content');
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Show the corresponding tab content
+                const tabId = tab.getAttribute('data-tab');
+                const tabContent = document.getElementById(`${tabId}-content`);
+                if (tabContent) {
+                    tabContent.classList.add('active');
+                }
+            });
+        });
+        
+        // Character counter for study guide textarea
+        const studyGuideTextareas = document.querySelectorAll('.study-guide-textarea');
+        studyGuideTextareas.forEach(textarea => {
+            const counter = textarea.nextElementSibling;
+            if (counter && counter.classList.contains('character-counter')) {
+                textarea.addEventListener('input', () => {
+                    const count = textarea.value.length;
+                    counter.textContent = `${count}/100,000 characters`;
+                });
+            }
+        });
+        
+        // Browse files button for study guide
+        const browseFilesBtns = document.querySelectorAll('.browse-files-btn');
+        browseFilesBtns.forEach(btn => {
+            const fileUploadId = btn.id.replace('browse-files-btn', 'file-upload').replace('test-', '');
+            const fileUpload = document.getElementById(fileUploadId) || document.getElementById('test-file-upload');
+            
+            if (fileUpload) {
+                btn.addEventListener('click', () => {
+                    fileUpload.click();
+                });
+                
+                fileUpload.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        const files = Array.from(e.target.files);
+                        const fileNames = files.map(file => file.name).join(', ');
+                        btn.textContent = `Selected: ${fileNames}`;
+                    }
+                });
+            }
+        });
+        
+        // Generate button functionality
+        const generateBtns = document.querySelectorAll('.generate-btn');
+        generateBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Show loading state
+                const originalText = this.textContent;
+                this.textContent = 'Generating...';
+                this.disabled = true;
+                
+                // Simulate processing delay
+                setTimeout(() => {
+                    // Show success message
+                    alert('Generated successfully! It will now appear in your library.');
+                    
+                    // Reset button
+                    this.textContent = originalText;
+                    this.disabled = false;
+                    
+                    // Close modal
+                    this.closest('.modal-overlay').classList.remove('active');
+                    resetViews();
+                    
+                    // Refresh the library content
+                    location.reload();
+                }, 2000);
+            });
+        });
+        
+        // Function to set up flashcard set add buttons
+        function setupFlashcardSetAddButtons() {
+            const flashcardSetAddBtns = document.querySelectorAll('.flashcard-set-add');
+            flashcardSetAddBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Toggle selected state
+                    if (this.textContent === '+') {
+                        this.textContent = '✓';
+                        this.style.backgroundColor = 'var(--primary)';
+                        this.style.color = 'var(--white)';
+                        this.classList.add('selected');
+                    } else {
+                        this.textContent = '+';
+                        this.style.backgroundColor = 'var(--white)';
+                        this.style.color = 'var(--primary)';
+                        this.classList.remove('selected');
+                    }
+                });
+            });
+        }
+        
+        // Initialize any existing flashcard set add buttons
+        setupFlashcardSetAddButtons();
+        
+        // Handle file browse button for PDF
+        if (browsePdfBtn && pdfUpload) {
+            browsePdfBtn.addEventListener('click', () => {
+                pdfUpload.click();
+            });
+            
+            // Handle file selection
+            pdfUpload.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    uploadedFile = e.target.files[0];
+                    browsePdfBtn.textContent = `Selected: ${uploadedFile.name}`;
+                    
+                    // Show the analyze button
+                    analyzePdfBtn.style.display = 'block';
+                    
+                    // Preview the PDF if it's a PDF file
+                    if (uploadedFile.type === 'application/pdf') {
+                        previewPDF(uploadedFile);
+                    } else if (uploadedFile.type === 'text/plain') {
+                        previewTextFile(uploadedFile);
+                    } else if (uploadedFile.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                        // For DOCX files, just show a message
+                        pdfPreview.style.display = 'block';
+                        pdfPageCount.textContent = 'DOCX file';
+                        pdfPreviewContent.innerHTML = '<p>DOCX preview not available. Click "Analyze with AI" to process the document.</p>';
+                    }
+                }
+            });
+        }
+        
+        // Preview PDF file
+        function previewPDF(file) {
+            const fileReader = new FileReader();
+            
+            fileReader.onload = function() {
+                const typedarray = new Uint8Array(this.result);
+                
+                // Load the PDF
+                pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
+                    pdfPreview.style.display = 'block';
+                    pdfPageCount.textContent = `${pdf.numPages} pages`;
+                    pdfPreviewContent.innerHTML = '';
+                    
+                    // Only load the first 3 pages for preview
+                    const pagesToLoad = Math.min(pdf.numPages, 3);
+                    
+                    for (let i = 1; i <= pagesToLoad; i++) {
+                        pdf.getPage(i).then(function(page) {
+                            page.getTextContent().then(function(textContent) {
+                                const pageDiv = document.createElement('div');
+                                pageDiv.className = 'pdf-preview-page';
+                                
+                                const pageHeader = document.createElement('h5');
+                                pageHeader.textContent = `Page ${i}`;
+                                pageDiv.appendChild(pageHeader);
+                                
+                                const pageText = document.createElement('p');
+                                let lastY = textContent.items[0].transform[5];
+                                let text = '';
+                                
+                                for (let j = 0; j < textContent.items.length; j++) {
+                                    const item = textContent.items[j];
+                                    
+                                    // Add a new line if the y position changes significantly
+                                    if (j > 0 && Math.abs(item.transform[5] - lastY) > 5) {
+                                        text += '\n';
+                                    }
+                                    
+                                    text += item.str + ' ';
+                                    lastY = item.transform[5];
+                                }
+                                
+                                pageText.textContent = text;
+                                pageDiv.appendChild(pageText);
+                                
+                                pdfPreviewContent.appendChild(pageDiv);
+                            });
+                        });
+                    }
+                    
+                    if (pdf.numPages > 3) {
+                        const morePages = document.createElement('p');
+                        morePages.textContent = `... and ${pdf.numPages - 3} more pages`;
+                        morePages.style.textAlign = 'center';
+                        morePages.style.fontStyle = 'italic';
+                        morePages.style.color = 'var(--text-light)';
+                        pdfPreviewContent.appendChild(morePages);
+                    }
+                });
+            };
+            
+            fileReader.readAsArrayBuffer(file);
+        }
+        
+        // Preview text file
+        function previewTextFile(file) {
+            const fileReader = new FileReader();
+            
+            fileReader.onload = function() {
+                pdfPreview.style.display = 'block';
+                pdfPageCount.textContent = 'Text file';
+                
+                const text = this.result;
+                const lines = text.split('\n');
+                
+                // Only show the first 100 lines for preview
+                const linesToShow = Math.min(lines.length, 100);
+                let previewText = '';
+                
+                for (let i = 0; i < linesToShow; i++) {
+                    previewText += lines[i] + '\n';
+                }
+                
+                if (lines.length > 100) {
+                    previewText += '\n... and more lines';
+                }
+                
+                pdfPreviewContent.innerHTML = `<pre>${previewText}</pre>`;
+            };
+            
+            fileReader.readAsText(file);
+        }
+        
+        // Handle analyze button click
+        if (analyzePdfBtn) {
+            analyzePdfBtn.addEventListener('click', () => {
+                // Simulate processing and then show the flashcard creation view
+                setTimeout(() => {
+                    showView(flashcardCreationView);
+                    modalTitle.textContent = 'Create a new flashcard set';
+                    document.querySelector('.modal').classList.add('flashcard-mode');
+                    
+                    // Pre-fill the title with the filename
+                    if (uploadedFile) {
+                        const filename = uploadedFile.name.replace(/\.[^/.]+$/, ""); // Remove extension
+                        document.getElementById('flashcard-set-title').value = filename;
+                    }
+                }, 1500);
+            });
+        }
+        
+        // Add new flashcard card
+        if (addCardButton) {
+            addCardButton.addEventListener('click', addNewCard);
+        }
+        
+        // Add new card function
+        function addNewCard() {
+            const cards = document.querySelectorAll('.flashcard-card');
+            const newCardNumber = cards.length + 1;
+            
+            const newCard = document.createElement('div');
+            newCard.className = 'flashcard-card';
+            newCard.setAttribute('data-card-id', newCardNumber);
+            
+            newCard.innerHTML = `
+                <div class="flashcard-card-header">
+                    <div class="flashcard-card-number">${newCardNumber}</div>
+                    <div class="flashcard-card-actions">
+                        <button class="btn btn-sm btn-outline move-card-up" title="Move up">
+                            <i class="icon">↑</i>
+                        </button>
+                        <button class="btn btn-sm btn-outline move-card-down" title="Move down">
+                            <i class="icon">↓</i>
+                        </button>
+                        <button class="btn btn-sm btn-outline delete-card" title="Delete card">
+                            <i class="icon">🗑️</i>
+                        </button>
+                    </div>
+                </div>
+                <div class="flashcard-card-content">
+                    <div class="flashcard-field">
+                        <div class="flashcard-field-label">Term</div>
+                        <input type="text" class="form-input flashcard-term" placeholder="Enter term">
+                    </div>
+                    <div class="flashcard-field">
+                        <div class="flashcard-field-label">Definition</div>
+                        <input type="text" class="form-input flashcard-definition" placeholder="Enter definition">
+                    </div>
+                </div>
+                <div class="flashcard-image-upload" data-for="${newCardNumber}">
+                    <div class="flashcard-image-icon">🖼️</div>
+                    <div class="flashcard-image-text">Image</div>
+                    <input type="file" class="upload-input flashcard-image-input" accept="image/*">
+                </div>
+            `;
+            
+            flashcardCardsContainer.appendChild(newCard);
+            
+            // Add event listeners to the new card
+            setupCardEventListeners(newCard);
+        }
+        
+        // Setup event listeners for flashcard cards
+        function setupCardEventListeners(card) {
+            // Delete card
+            const deleteBtn = card.querySelector('.delete-card');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                    if (document.querySelectorAll('.flashcard-card').length > 1) {
+                        card.remove();
+                        renumberCards();
+                    } else {
+                        alert('You must have at least one card in your flashcard set.');
+                    }
+                });
+            }
+            
+            // Move card up
+            const upBtn = card.querySelector('.move-card-up');
+            if (upBtn) {
+                upBtn.addEventListener('click', function() {
+                    const prev = card.previousElementSibling;
+                    if (prev && prev.classList.contains('flashcard-card')) {
+                        flashcardCardsContainer.insertBefore(card, prev);
+                        renumberCards();
+                    }
+                });
+            }
+            
+            // Move card down
+            const downBtn = card.querySelector('.move-card-down');
+            if (downBtn) {
+                downBtn.addEventListener('click', function() {
+                    const next = card.nextElementSibling;
+                    if (next && next.classList.contains('flashcard-card')) {
+                        flashcardCardsContainer.insertBefore(next, card);
+                        renumberCards();
+                    }
+                });
+            }
+            
+            // Image upload
+            const imageUpload = card.querySelector('.flashcard-image-upload');
+            const imageInput = card.querySelector('.flashcard-image-input');
+            
+            if (imageUpload && imageInput) {
+                imageUpload.addEventListener('click', function() {
+                    imageInput.click();
+                });
+                
+                handleImageUpload(imageUpload, imageInput);
+            }
+        }
+        
+        // Image upload handler
+        function handleImageUpload(imageUpload, imageInput) {
+            imageInput.addEventListener('change', function(e) {
+                console.log('Image input change detected');
+                if (e.target.files.length > 0) {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(event) {
+                        // Create preview image
+                        imageUpload.innerHTML = '';
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        img.style.maxWidth = '100%';
+                        img.style.maxHeight = '100px';
+                        imageUpload.appendChild(img);
+                        
+                        // Add delete button
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.className = 'image-delete-btn';
+                        deleteBtn.innerHTML = '🗑️';
+                        deleteBtn.title = 'Remove image';
+                        deleteBtn.style.position = 'absolute';
+                        deleteBtn.style.top = '5px';
+                        deleteBtn.style.right = '5px';
+                        deleteBtn.style.backgroundColor = 'var(--white)';
+                        deleteBtn.style.border = '1px solid var(--border)';
+                        deleteBtn.style.borderRadius = '50%';
+                        deleteBtn.style.width = '24px';
+                        deleteBtn.style.height = '24px';
+                        deleteBtn.style.display = 'flex';
+                        deleteBtn.style.alignItems = 'center';
+                        deleteBtn.style.justifyContent = 'center';
+                        deleteBtn.style.cursor = 'pointer';
+                        deleteBtn.style.zIndex = '10';
+                        
+                        deleteBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            resetImageUpload(imageUpload, imageUpload.getAttribute('data-for'));
+                        });
+                        
+                        imageUpload.appendChild(deleteBtn);
+                        
+                        // Keep the input but hide it
+                        const newInput = document.createElement('input');
+                        newInput.type = 'file';
+                        newInput.className = 'upload-input flashcard-image-input';
+                        newInput.accept = 'image/*';
+                        newInput.style.display = 'none';
+                        imageUpload.appendChild(newInput);
+                        
+                        // Add event listener to the new input
+                        newInput.addEventListener('change', function(e) {
+                            handleImageUpload(imageUpload, newInput);
+                        });
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        // Reset image upload
+        function resetImageUpload(uploadArea, cardId) {
+            uploadArea.innerHTML = `
+                <div class="flashcard-image-icon">🖼️</div>
+                <div class="flashcard-image-text">Image</div>
+                <input type="file" class="upload-input flashcard-image-input" accept="image/*">
+            `;
+            
+            // Re-add event listener
+            const newInput = uploadArea.querySelector('.flashcard-image-input');
+            uploadArea.addEventListener('click', function() {
+                newInput.click();
+            });
+            
+            handleImageUpload(uploadArea, newInput);
+        }
+        
+        // Renumber cards
+        function renumberCards() {
+            const cards = document.querySelectorAll('.flashcard-card');
+            cards.forEach((card, index) => {
+                const number = index + 1;
+                card.querySelector('.flashcard-card-number').textContent = number;
+                card.setAttribute('data-card-id', number);
+                
+                // Update image upload data-for attribute
+                const imageUpload = card.querySelector('.flashcard-image-upload');
+                if (imageUpload) {
+                    imageUpload.setAttribute('data-for', number);
+                }
+            });
+        }
+        
+        // Initialize event listeners for existing cards
+        document.querySelectorAll('.flashcard-card').forEach(card => {
+            setupCardEventListeners(card);
+        });
+
+        // Initialize flashcard image uploads
+        document.querySelectorAll('.flashcard-image-upload').forEach(upload => {
+            const input = upload.querySelector('.flashcard-image-input');
+            if (input) {
+                upload.addEventListener('click', () => {
+                    input.click();
+                });
+            }
+        });
+        
+        // Cancel buttons for flashcard creation
+        const cancelFlashcardBtns = document.querySelectorAll('#cancel-flashcard, #cancel-flashcard-footer');
+        cancelFlashcardBtns.forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    showView(flashcardMethodView);
+                });
+            }
+        });
+        
+        // Create buttons for flashcard creation
+        const createFlashcardBtns = document.querySelectorAll('#create-flashcard, #create-flashcard-footer');
+        createFlashcardBtns.forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', saveFlashcards);
+            }
+        });
+        
+        const createPracticeFlashcardBtns = document.querySelectorAll('#create-practice-flashcard, #create-practice-flashcard-footer');
+        createPracticeFlashcardBtns.forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', saveAndPracticeFlashcards);
+            }
+        });
+        
+        // Save flashcards
+        function saveFlashcards() {
+            const title = document.getElementById('flashcard-set-title').value;
+            if (!title) {
+                alert('Please enter a title for your flashcard set.');
+                return;
+            }
+            
+            const cards = document.querySelectorAll('.flashcard-card');
+            const flashcardData = [];
+            
+            let isValid = true;
+            
+            cards.forEach((card, index) => {
+                const term = card.querySelector('.flashcard-term').value;
+                const definition = card.querySelector('.flashcard-definition').value;
+                
+                if (!term || !definition) {
+                    isValid = false;
+                }
+                
+                // Get image if exists
+                let imageData = null;
+                const imageUpload = card.querySelector('.flashcard-image-upload');
+                if (imageUpload.querySelector('img')) {
+                    imageData = imageUpload.querySelector('img').src;
+                }
+                
+                flashcardData.push({
+                    id: index + 1,
+                    term: term,
+                    definition: definition,
+                    image: imageData
+                });
+            });
+            
+            if (!isValid) {
+                alert('Please fill in all terms and definitions.');
+                return;
+            }
+            
+            // Create flashcard set object
+            const flashcardSet = {
+                title: title,
+                description: document.getElementById('flashcard-set-description').value,
+                cards: flashcardData,
+                created_at: new Date().toISOString()
+            };
+            
+            // Save to localStorage for demo purposes
+            let savedSets = [];
+            try {
+                const existingSets = localStorage.getItem('flashcardSets');
+                if (existingSets) {
+                    savedSets = JSON.parse(existingSets);
+                }
+            } catch (e) {
+                console.error('Error parsing saved flashcard sets:', e);
+            }
+            
+            savedSets.push(flashcardSet);
+            localStorage.setItem('flashcardSets', JSON.stringify(savedSets));
+            
+            // Show success message
+            alert('Flashcard set created successfully! It will now appear in your library.');
+            this.closest('.modal-overlay').classList.remove('active');
+            resetViews();
+            
+            // Refresh the library content to show the new set
+            location.reload();
+        }
+        
+        // Save and practice flashcards
+        function saveAndPracticeFlashcards() {
+            saveFlashcards();
+            // In a real implementation, this would redirect to the practice page
+            console.log('Redirecting to practice mode...');
+        }
+        
+        // File drag and drop functionality
+        if (pdfUploadArea) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                pdfUploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                pdfUploadArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                pdfUploadArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                pdfUploadArea.style.borderColor = 'var(--primary)';
+                pdfUploadArea.style.backgroundColor = 'rgba(151, 71, 255, 0.1)';
+            }
+            
+            function unhighlight() {
+                pdfUploadArea.style.borderColor = 'var(--primary-light)';
+                pdfUploadArea.style.backgroundColor = 'rgba(151, 71, 255, 0.05)';
+            }
+            
+            pdfUploadArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length > 0) {
+                    uploadedFile = files[0];
+                    pdfUpload.files = files;
+                    browsePdfBtn.textContent = `Selected: ${uploadedFile.name}`;
+                    
+                    // Show the analyze button
+                    analyzePdfBtn.style.display = 'block';
+                    
+                    // Preview the file
+                    if (uploadedFile.type === 'application/pdf') {
+                        previewPDF(uploadedFile);
+                    } else if (uploadedFile.type === 'text/plain') {
+                        previewTextFile(uploadedFile);
+                    } else if (uploadedFile.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                        // For DOCX files, just show a message
+                        pdfPreview.style.display = 'block';
+                        pdfPageCount.textContent = 'DOCX file';
+                        pdfPreviewContent.innerHTML = '<p>DOCX preview not available. Click "Analyze with AI" to process the document.</p>';
+                    }
+                }
+            }
+        }
+
+        // Helper function to directly open flashcard creation
+        function openFlashcardCreation() {
+            modal.classList.add('active');
+            showView(flashcardMethodView);
+            modalTitle.textContent = 'Create Flashcard Set';
+        }
+
+        // Add a test button (for debugging only - you can remove this later)
+        document.addEventListener('DOMContentLoaded', function() {
+            const testBtn = document.createElement('button');
+            testBtn.textContent = 'Test Flashcard Modal';
+            testBtn.style.position = 'fixed';
+            testBtn.style.bottom = '10px';
+            testBtn.style.right = '10px';
+            testBtn.style.zIndex = '9999';
+            testBtn.style.background = 'var(--primary)';
+            testBtn.style.color = 'white';
+            testBtn.style.padding = '8px 12px';
+            testBtn.style.border = 'none';
+            testBtn.style.borderRadius = '4px';
+            testBtn.style.cursor = 'pointer';
+    
+            testBtn.addEventListener('click', openFlashcardCreation);
+    
+            // Uncomment this line to add the test button
+            // document.body.appendChild(testBtn);
+        });
+
+        // Ensure modal elements are initialized correctly
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Modal elements found:', {
+                modal: !!modal,
+                createBtn: !!createBtn,
+                closeBtn: !!closeBtn,
+                flashcardMethodView: !!flashcardMethodView,
+                flashcardCreationView: !!flashcardCreationView
+            });
+            
+            // Make sure "Flashcard Set" option is properly wired
+            const flashcardOption = document.querySelector('[data-option="flashcards"]');
+            if (flashcardOption) {
+                console.log('Flashcard option found, adding additional listener');
+                flashcardOption.addEventListener('click', function() {
+                    showView(flashcardMethodView);
+                    modalTitle.textContent = 'Create Flashcard Set';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

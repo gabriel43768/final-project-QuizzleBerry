@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Quizzleberry - Smart Quiz Platform</title>
+    <style>
+        :root {
+            --primary: #4b2c91;
+            --primary-light: #9747ff;
+            --primary-dark: #3a2170;
+            --secondary: #10b981;
+            --light-bg: #f8f9fa;
+            --border: #e5e7eb;
+            --text: #333;
+            --text-light: #6b7280;
+            --white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        /* Header & Navigation */
+        header {
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+        }
+        
+        .login-btn {
+            margin-right: 1rem;
+            color: var(--primary);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .login-btn:hover {
+            color: var(--primary-dark);
+        }
+        
+        .signup-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 9999px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-decoration: none;
+        }
+        
+        .signup-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 160px 0 80px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: var(--white);
+            text-align: center;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        /* About Section */
+        .about-section {
+            padding: 80px 0;
+            background-color: var(--white);
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.25rem;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.125rem;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .about-image {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .about-text {
+            color: var(--text);
+        }
+        
+        .about-text p {
+            margin-bottom: 1.5rem;
+        }
+        
+        .about-text h3 {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+        }
+        
+        /* Mission Section */
+        .mission-section {
+            padding: 80px 0;
+            background-color: var(--light-bg);
+            text-align: center;
+        }
+        
+        .mission-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .mission-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Features Section */
+        .features-section {
+            padding: 80px 0;
+            background-color: var(--white);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background-color: var(--light-bg);
+            border-radius: 8px;
+            padding: 2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .feature-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-dark);
+        }
+        
+        .feature-description {
+            color: var(--text-light);
+        }
+        
+        /* How It Works Section */
+        .how-it-works {
+            padding: 80px 0;
+            background-color: var(--light-bg);
+        }
+        
+        .workflow {
+            position: relative;
+            max-width: 800px;
+            margin: 3rem auto 0;
+        }
+        
+        .workflow::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            background-color: var(--primary-light);
+            transform: translateX(-50%);
+        }
+        
+        .workflow-step {
+            position: relative;
+            margin-bottom: 3rem;
+            display: flex;
+        }
+        
+        .workflow-step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .workflow-step:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+        
+        .workflow-content {
+            width: 45%;
+            padding: 1.5rem;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .workflow-step:nth-child(odd) .workflow-content {
+            text-align: right;
+        }
+        
+        .workflow-number {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+        
+        .workflow-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+        
+        .workflow-description {
+            color: var(--text-light);
+        }
+        
+        /* Team Section */
+        .team-section {
+            padding: 80px 0;
+            background-color: var(--white);
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .team-card {
+            background-color: var(--light-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+        
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .team-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .team-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .team-name {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+            color: var(--primary-dark);
+        }
+        
+        .team-role {
+            font-size: 0.875rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .team-bio {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .team-social {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+        
+        .social-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--primary);
+        }
+        
+        /* Contact Section */
+        .contact-section {
+            padding: 80px 0;
+            background-color: var(--light-bg);
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .contact-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .contact-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .contact-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-dark);
+        }
+        
+        .contact-info {
+            color: var(--text-light);
+        }
+        
+        .contact-info a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .contact-info a:hover {
+            color: var(--primary-dark);
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: var(--white);
+            text-align: center;
+        }
+        
+        .cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.25rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta-section p {
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .cta-btn {
+            background-color: var(--secondary);
+            color: var(--white);
+            border: none;
+            border-radius: 9999px;
+            padding: 0.75rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            padding: 60px 0 30px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .footer-logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--white);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .social-link {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+        
+        .social-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .footer-title {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--white);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;
+            text-align: center;
+            font-size: 0.875rem;
+            opacity: 0.7;
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            background-color: var(--white);
+            padding: 1.5rem;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 99;
+        }
+        
+        .mobile-menu.active {
+            display: block;
+        }
+        
+        .mobile-nav-links {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+        
+        .mobile-nav-links li {
+            margin-bottom: 1rem;
+        }
+        
+        .mobile-nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            display: block;
+            padding: 0.5rem 0;
+        }
+        
+        .mobile-auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .mobile-auth-buttons .login-btn, 
+        .mobile-auth-buttons .signup-btn {
+            text-align: center;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .workflow::before {
+                left: 30px;
+            }
+            
+            .workflow-step {
+                flex-direction: row !important;
+            }
+            
+            .workflow-step:nth-child(odd) .workflow-content {
+                text-align: left;
+            }
+            
+            .workflow-content {
+                width: calc(100% - 60px);
+                margin-left: 60px;
+            }
+            
+            .workflow-number {
+                left: 30px;
+                transform: translateX(-50%);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links, .auth-buttons {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.25rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="111.png" alt="Quizzleberry Logo">
+                    <div class="logo-text">Quizzleberry</div>
+                </div>
+                
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#features">Features</a></li>
+                    <li><a href="about.html" class="active">About Us</a></li>
+                </ul>
+                
+                <div class="auth-buttons">
+                    <a href="login.html" class="login-btn">Log In</a>
+                    <a href="register.html" class="signup-btn">Sign Up Free</a>
+                </div>
+                
+                <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <ul class="mobile-nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#features">Features</a></li>
+            <li><a href="about.html" class="active">About Us</a></li>
+        </ul>
+        
+        <div class="mobile-auth-buttons">
+            <a href="login.html" class="login-btn">Log In</a>
+            <a href="register.html" class="signup-btn">Sign Up Free</a>
+        </div>
+    </div>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>About Quizzleberry</h1>
+                <p>Learn about our mission, our team, and the story behind the platform that's revolutionizing quiz creation and learning.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <h2 class="section-title">Our Story</h2>
+            <p class="section-subtitle">Quizzleberry was born from a simple idea: make learning engaging, accessible, and effective for everyone.</p>
+                
+                <div class="about-text">
+                    <h3>Revolutionizing Knowledge Sharing</h3>
+                    <p>In the modern era of education and knowledge sharing, online quiz platforms have emerged as an effective way to engage users in learning and testing their knowledge on various subjects. Quizzleberry was created to address the need for an intuitive, powerful platform that makes quiz creation and participation seamless.</p>
+                    
+                    <p>Our journey began with a simple observation: traditional learning methods often fail to engage students and knowledge seekers in meaningful ways. We set out to build a platform that combines the best aspects of interactive learning with the convenience of digital technology.</p>
+                    
+                    <p>Today, Quizzleberry serves as a comprehensive quiz application that efficiently manages user authentication, quiz creation, and automated scoring, ensuring a seamless experience for both administrators and participants.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Mission Section -->
+    <section class="mission-section">
+        <div class="container">
+            <div class="mission-content">
+                <div class="mission-icon">🎯</div>
+                <h2 class="section-title">Our Mission</h2>
+                <p>Quizzleberry aims to make knowledge sharing accessible and enjoyable for everyone through engaging quizzes and user-friendly features. We believe that learning should be interactive, personalized, and fun.</p>
+                <p>Our platform is designed to enhance the learning experience by providing tools that make it easy to create, share, and take quizzes on any subject. Whether you're a teacher, student, professional trainer, or just someone who loves to learn, Quizzleberry is built for you.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Key Features</h2>
+            <p class="section-subtitle">Quizzleberry offers a comprehensive set of features designed to make quiz creation and participation seamless.</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👤</div>
+                    <h3 class="feature-title">User Authentication</h3>
+                    <p class="feature-description">Secure user registration and login system to protect user data and personalize the experience.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">✏️</div>
+                    <h3 class="feature-title">Quiz Creation</h3>
+                    <p class="feature-description">Intuitive tools for creating multiple-choice questions and organizing them into comprehensive quizzes.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3 class="feature-title">Quiz Management</h3>
+                    <p class="feature-description">Edit or delete quizzes when necessary, maintaining full control over your content.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Automated Scoring</h3>
+                    <p class="feature-description">Instant calculation and storage of scores after quiz submission for immediate feedback.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">Responsive Design</h3>
+                    <p class="feature-description">Access Quizzleberry on any device, ensuring a consistent experience across desktop and mobile.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">System Overview</h2>
+            <p class="section-subtitle">Quizzleberry operates with a structured flow, ensuring a seamless experience for all users.</p>
+            
+            <div class="workflow">
+                <div class="workflow-step">
+                    <div class="workflow-number">1</div>
+                    <div class="workflow-content">
+                        <h3 class="workflow-title">User Registration & Authentication</h3>
+                        <p class="workflow-description">Users create accounts and log in securely. The application maintains a user database to store registration details and profile updates.</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="workflow-number">2</div>
+                    <div class="workflow-content">
+                        <h3 class="workflow-title">Quiz Creation</h3>
+                        <p class="workflow-description">Users can create quizzes, adding multiple-choice questions stored in the quiz database. Each quiz consists of multiple questions with various options.</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="workflow-number">3</div>
+                    <div class="workflow-content">
+                        <h3 class="workflow-title">Quiz Management</h3>
+                        <p class="workflow-description">The system allows users to edit or delete quizzes when necessary, maintaining full control over their content.</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="workflow-number">4</div>
+                    <div class="workflow-content">
+                        <h3 class="workflow-title">Interactive Quiz Taking</h3>
+                        <p class="workflow-description">The quiz-taking process is interactive, allowing users to answer questions while the system captures their responses.</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="workflow-number">5</div>
+                    <div class="workflow-content">
+                        <h3 class="workflow-title">Automated Scoring</h3>
+                        <p class="workflow-description">After submission, scores are calculated automatically and stored in a separate scores database for tracking progress.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <h2 class="section-title">Get in Touch</h2>
+            <p class="section-subtitle">Have questions or feedback? We'd love to hear from you.</p>
+            
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">✉️</div>
+                    <h3 class="contact-title">Email Us</h3>
+                    <p class="contact-info"><a href="mailto:info@quizzleberry.com">info@quizzleberry.com</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Get Started?</h2>
+                <p>Join thousands of users who are already creating and taking quizzes on Quizzleberry.</p>
+                <a href="register.html" class="cta-btn">Sign Up for Free</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-logo">
+                        <img src="111.png" alt="Quizzleberry Logo">
+                        <div class="footer-logo-text">Quizzleberry</div>
+                    </div>
+                    <div class="social-links">
+                        <a href="#" class="social-link">f</a>
+                        <a href="#" class="social-link">t</a>
+                        <a href="#" class="social-link">in</a>
+                        <a href="#" class="social-link">ig</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="footer-title">Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html">About Us</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="footer-title">Contact</h3>
+                    <ul class="footer-links">
+                        <a href="mailto:info@quizzleberry.com">info@quizzleberry.com</a>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Quizzleberry. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+        });
+        
+        // Close mobile menu when clicking on a link
+        const mobileLinks = document.querySelectorAll('.mobile-nav-links a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+            });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
