@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - Quizzleberry</title>
+    <style>
+        :root {
+            --primary: #4b2c91;
+            --primary-light: #9747ff;
+            --primary-dark: #3a2170;
+            --secondary: #10b981;
+            --light-bg: #f8f9fa;
+            --border: #e5e7eb;
+            --text: #333;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background-color: var(--white);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+        
+        .sidebar-logo {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            padding: 0 1rem;
+        }
+        
+        .sidebar-nav-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-nav-link:hover, .sidebar-nav-link.active {
+            background-color: rgba(151, 71, 255, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-nav-link i {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+        
+        .user-name {
+            font-weight: 500;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 240px;
+            padding: 2rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+        
+        .leaderboard-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+        
+        .tab {
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+            color: var(--text-light);
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Top 3 Podium */
+        .podium-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            margin-bottom: 3rem;
+            height: 250px;
+        }
+        
+        .podium-place {
+            text-align: center;
+            margin: 0 1rem;
+        }
+        
+        .podium-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+            border: 3px solid var(--white);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .podium-first .podium-avatar {
+            width: 80px;
+            height: 80px;
+            font-size: 2rem;
+            border-color: var(--gold);
+        }
+        
+        .podium-second .podium-avatar {
+            border-color: var(--silver);
+        }
+        
+        .podium-third .podium-avatar {
+            border-color: var(--bronze);
+        }
+        
+        .podium-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .podium-score {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .podium-block {
+            width: 100px;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+        
+        .podium-first .podium-block {
+            height: 120px;
+            background: linear-gradient(to right, #e6b800, var(--gold));
+        }
+        
+        .podium-second .podium-block {
+            height: 90px;
+            background: linear-gradient(to right, #b3b3b3, var(--silver));
+        }
+        
+        .podium-third .podium-block {
+            height: 60px;
+            background: linear-gradient(to right, #a35719, var(--bronze));
+        }
+        
+        /* Leaderboard Table */
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--white);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .leaderboard-table th {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 1rem;
+            text-align: left;
+        }
+        
+        .leaderboard-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .leaderboard-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .leaderboard-table tr:hover {
+            background-color: rgba(151, 71, 255, 0.05);
+        }
+        
+        .rank {
+            font-weight: 700;
+            width: 60px;
+        }
+        
+        .rank-1, .rank-2, .rank-3 {
+            font-size: 1.25rem;
+        }
+        
+        .rank-1 {
+            color: var(--gold);
+        }
+        
+        .rank-2 {
+            color: var(--silver);
+        }
+        
+        .rank-3 {
+            color: var(--bronze);
+        }
+        
+        .user-cell {
+            display: flex;
+            align-items: center;
+        }
+        
+        .table-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+        
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name-table {
+            font-weight: 500;
+        }
+        
+        .user-level {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        
+        .score {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .highlight {
+            background-color: rgba(151, 71, 255, 0.1);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background-color: var(--white);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .page-btn:hover, .page-btn.active {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 1rem;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar-nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 0.5rem 0;
+            }
+            
+            .sidebar-nav-item {
+                margin-right: 0.5rem;
+                margin-bottom: 0;
+            }
+            
+            .sidebar-footer {
+                display: none;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .leaderboard-tabs {
+                overflow-x: auto;
+                width: 100%;
+            }
+            
+            .podium-container {
+                flex-direction: column;
+                align-items: center;
+                height: auto;
+                gap: 2rem;
+            }
+            
+            .podium-place {
+                display: flex;
+                align-items: center;
+                width: 100%;
+            }
+            
+            .podium-info {
+                margin-left: 1rem;
+                text-align: left;
+            }
+            
+            .podium-block {
+                display: none;
+            }
+            
+            .leaderboard-table {
+                font-size: 0.875rem;
+            }
+            
+            .table-avatar {
+                width: 32px;
+                height: 32px;
+            }
+        }
+        
+        /* Icons (using Unicode for simplicity) */
+        .icon {
+            font-style: normal;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo" style="background-image: url('111.png');"></div>
+            <div class="sidebar-brand">Quizzleberry</div>
+        </div>
+        
+        <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+                <a href="index.html" class="sidebar-nav-link active">
+                    <i class="icon">🏠</i> Home
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="library.html" class="sidebar-nav-link">
+                    <i class="icon">📚</i> My Library
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="explore.html" class="sidebar-nav-link">
+                    <i class="icon">🔍</i> Explore
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="progress.html" class="sidebar-nav-link">
+                    <i class="icon">📊</i> Progress
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="leaderboard.html" class="sidebar-nav-link">
+                    <i class="icon">🏆</i> Leaderboard
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="settings.html" class="sidebar-nav-link">
+                    <i class="icon">⚙️</i> Settings
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="login.html" class="sidebar-nav-link">
+                    <i class="icon">👤</i> Register
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">D</div>
+                <div class="user-name">Demo User</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1 class="page-title">Leaderboard</h1>
+        </div>
+        
+        <div class="leaderboard-tabs">
+            <div class="tab active" onclick="switchTab('global')">Global</div>
+            <div class="tab" onclick="switchTab('friends')">Friends</div>
+            <div class="tab" onclick="switchTab('science')">Science</div>
+            <div class="tab" onclick="switchTab('math')">Mathematics</div>
+            <div class="tab" onclick="switchTab('history')">History</div>
+            <div class="tab" onclick="switchTab('language')">Languages</div>
+        </div>
+        
+        <!-- Global Leaderboard Tab -->
+        <div id="global" class="tab-content active">
+            <div class="podium-container">
+                <div class="podium-place podium-second">
+                    <div class="podium-avatar">B</div>
+                    <div class="podium-name">BrainiacQueen</div>
+                    <div class="podium-score">875 pts</div>
+                    <div class="podium-block"></div>
+                </div>
+                
+                <div class="podium-place podium-first">
+                    <div class="podium-avatar">Q</div>
+                    <div class="podium-name">QuizMaster</div>
+                    <div class="podium-score">980 pts</div>
+                    <div class="podium-block"></div>
+                </div>
+                
+                <div class="podium-place podium-third">
+                    <div class="podium-avatar">K</div>
+                    <div class="podium-name">KnowledgeKing</div>
+                    <div class="podium-score">820 pts</div>
+                    <div class="podium-block"></div>
+                </div>
+            </div>
+            
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Score</th>
+                        <th>Quizzes</th>
+                        <th>Streak</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="rank rank-1">1</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="table-avatar">Q</div>
+                                <div class="user-details">
+                                    <div class="user-name-table">QuizMaster</div>
+                                    <div class="user-level">Level 42</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="score">980 pts</td>
+                        <td>145</td>
+                        <td>28 days</td>
+                    </tr>
+                    <tr>
+                        <td class="rank rank-2">2</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="table-avatar">B</div>
+                                <div class="user-details">
+                                    <div class="user-name-table">BrainiacQueen</div>
+                                    <div class="user-level">Level 38</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="score">875 pts</td>
+                        <td>132</td>
+                        <td>14 days</td>
+                    </tr>
+                    <tr>
+                        <td class="rank rank-3">3</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="table-avatar">K</div>
+                                <div class="user-details">
+                                    <div class="user-name-table">KnowledgeKing</div>
+                                    <div class="user-level">Level 35</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="score">820 pts</td>
+                        <td>128</td>
+                        <td>21 days</td>
+                    </tr>
+                    <tr>
+                        <td class="rank">4</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="table-avatar">W</div>
+                                <div class="user-details">
+                                    <div class="user-name-table">QuizWizard</div>
+                                    <div class="user-level">Level 33</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="score">790 pts</td>
+                        <td>115</td>
+                        <td>10 days</td>
+                    </tr>
+                    <tr>
+                        <td class="rank">5</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="table-avatar">B</div>
+                                <div class="user-details">
+                                    <div class="user-name-table">BerryBrain</div>
+                                    <div class="user-level">Level 30</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="score">750 pts</td>
+                        <td>108</td>
+                        <td>7 days</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td class="rank">42</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="table-avatar">D</div>
+                                <div class="user-details">
+                                    <div class="user-name-table">Demo User</div>
+                                    <div class="user-level">Level 12</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="score">320 pts</td>
+                        <td>45</td>
+                        <td>3 days</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="pagination">
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">4</button>
+                <button class="page-btn">5</button>
+                <button class="page-btn">→</button>
+            </div>
+        </div>
+        
+        <!-- Friends Leaderboard Tab -->
+        <div id="friends" class="tab-content">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Score</th>
+                        <th>Quizzes</th>
+                        <th>Streak</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="highlight">
+                        <td class="rank rank-1">1</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="table-avatar">D</div>
+                                <div class="user-details">
+                                    <div class="user-name-table">Demo User</div>
+                                    <div class="user-level">Level 12</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="score">320 pts</td>
+                        <td>45</td>
+                        <td>3 days</td>
+                    </tr>
+                    <tr>
+                        <td class="rank rank-2">2</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="table-avatar">A</div>
+                                <div class="user-details">
+                                    <div class="user-name-table">AlexQuizzer</div>
+                                    <div class="user-level">Level 10</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="score">280 pts</td>
+                        <td>38</td>
+                        <td>2 days</td>
+                    </tr>
+                    <tr>
+                        <td class="rank rank-3">3</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="table-avatar">S</div>
+                                <div class="user-details">
+                                    <div class="user-name-table">StudyBuddy</div>
+                                    <div class="user-level">Level 8</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="score">210 pts</td>
+                        <td>30</td>
+                        <td>1 day</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Subject Tabs (placeholder content) -->
+        <div id="science" class="tab-content">
+            <div class="podium-container">
+                <!-- Science leaderboard podium would go here -->
+            </div>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Score</th>
+                        <th>Quizzes</th>
+                        <th>Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Science leaderboard entries would go here -->
+                    <tr>
+                        <td class="rank">-</td>
+                        <td colspan="4" style="text-align: center;">Select a specific science topic to view rankings</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="math" class="tab-content">
+            <!-- Math leaderboard content would go here -->
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Score</th>
+                        <th>Quizzes</th>
+                        <th>Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="rank">-</td>
+                        <td colspan="4" style="text-align: center;">Select a specific math topic to view rankings</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="history" class="tab-content">
+            <!-- History leaderboard content would go here -->
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Score</th>
+                        <th>Quizzes</th>
+                        <th>Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="rank">-</td>
+                        <td colspan="4" style="text-align: center;">Select a specific history topic to view rankings</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="language" class="tab-content">
+            <!-- Language leaderboard content would go here -->
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Score</th>
+                        <th>Quizzes</th>
+                        <th>Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="rank">-</td>
+                        <td colspan="4" style="text-align: center;">Select a specific language to view rankings</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        function switchTab(tabId) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Deactivate all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Activate the selected tab and content
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>

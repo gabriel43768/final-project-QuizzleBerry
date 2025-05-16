@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Library - Quizzleberry</title>
+    <style>
+        :root {
+            --primary: #4b2c91;
+            --primary-light: #9747ff;
+            --primary-dark: #3a2170;
+            --secondary: #10b981;
+            --light-bg: #f8f9fa;
+            --border: #e5e7eb;
+            --text: #333;
+            --text-light: #6b7280;
+            --white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background-color: var(--white);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+        
+        .sidebar-logo {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            padding: 0 1rem;
+        }
+        
+        .sidebar-nav-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-nav-link:hover, .sidebar-nav-link.active {
+            background-color: rgba(151, 71, 255, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-nav-link i {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+        
+        .user-name {
+            font-weight: 500;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 240px;
+            padding: 2rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+        
+        .create-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 9999px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .create-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .create-btn i {
+            margin-right: 0.5rem;
+        }
+        
+        /* Library Tabs */
+        .library-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+        
+        .tab {
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+            color: var(--text-light);
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Card Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .card {
+            background-color: var(--white);
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            padding: 1.5rem;
+            color: var(--white);
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-subtitle {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .card-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .card-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            background-color: var(--white);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .card-btn:hover {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+        
+        .card-btn.primary {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+        
+        .card-btn.primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background-color: var(--white);
+            border-radius: 0.75rem;
+        }
+        
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-light);
+        }
+        
+        .empty-state-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+        
+        .empty-state-text {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 1rem;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar-nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 0.5rem 0;
+            }
+            
+            .sidebar-nav-item {
+                margin-right: 0.5rem;
+                margin-bottom: 0;
+            }
+            
+            .sidebar-footer {
+                display: none;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .library-tabs {
+                overflow-x: auto;
+                width: 100%;
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Icons (using Unicode for simplicity) */
+        .icon {
+            font-style: normal;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="111.png" alt="Quizzleberry Logo" class="sidebar-logo">
+            <div class="sidebar-brand">Quizzleberry</div>
+        </div>
+        
+        <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+                <a href="index.html" class="sidebar-nav-link active">
+                    <i class="icon">🏠</i> Home
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="library.html" class="sidebar-nav-link">
+                    <i class="icon">📚</i> My Library
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="explore.html" class="sidebar-nav-link">
+                    <i class="icon">🔍</i> Explore
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="progress.html" class="sidebar-nav-link">
+                    <i class="icon">📊</i> Progress
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="leaderboard.html" class="sidebar-nav-link">
+                    <i class="icon">🏆</i> Leaderboard
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="settings.html" class="sidebar-nav-link">
+                    <i class="icon">⚙️</i> Settings
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="login.html" class="sidebar-nav-link">
+                    <i class="icon">👤</i> Register
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">D</div>
+                <div class="user-name">Demo User</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1 class="page-title">My Library</h1>
+            
+            <button class="create-btn">
+                <i class="icon">➕</i> Create New
+            </button>
+        </div>
+        
+        <div class="library-tabs">
+            <div class="tab active" onclick="switchTab('flashcards')">Flashcard Sets</div>
+            <div class="tab" onclick="switchTab('tests')">Practice Tests</div>
+            <div class="tab" onclick="switchTab('guides')">Study Guides</div>
+            <div class="tab" onclick="switchTab('solutions')">Expert Solutions</div>
+            <div class="tab" onclick="switchTab('folders')">Folders</div>
+            <div class="tab" onclick="switchTab('classes')">Classes</div>
+        </div>
+        
+        <!-- Flashcard Sets Tab -->
+        <div id="flashcards" class="tab-content active">
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Science Quiz</h3>
+                        <div class="card-subtitle">Biology, Chemistry, Physics</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">42</div>
+                                <div class="stat-label">Cards</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">75%</div>
+                                <div class="stat-label">Mastered</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">3</div>
+                                <div class="stat-label">Days Streak</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Edit</button>
+                            <button class="card-btn primary">Study</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Math Challenge</h3>
+                        <div class="card-subtitle">Algebra, Geometry, Calculus</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">35</div>
+                                <div class="stat-label">Cards</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">40%</div>
+                                <div class="stat-label">Mastered</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">1</div>
+                                <div class="stat-label">Days Streak</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Edit</button>
+                            <button class="card-btn primary">Study</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">History Facts</h3>
+                        <div class="card-subtitle">Ancient, Medieval, Modern</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">50</div>
+                                <div class="stat-label">Cards</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">90%</div>
+                                <div class="stat-label">Mastered</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">7</div>
+                                <div class="stat-label">Days Streak</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Edit</button>
+                            <button class="card-btn primary">Study</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Geography</h3>
+                        <div class="card-subtitle">Countries, Capitals, Landmarks</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">28</div>
+                                <div class="stat-label">Cards</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">10%</div>
+                                <div class="stat-label">Mastered</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Days Streak</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Edit</button>
+                            <button class="card-btn primary">Study</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Practice Tests Tab -->
+        <div id="tests" class="tab-content">
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Science Final Exam</h3>
+                        <div class="card-subtitle">Comprehensive Test</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">30</div>
+                                <div class="stat-label">Questions</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">45</div>
+                                <div class="stat-label">Minutes</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">2</div>
+                                <div class="stat-label">Attempts</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Review</button>
+                            <button class="card-btn primary">Take Test</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Math Midterm</h3>
+                        <div class="card-subtitle">Algebra & Calculus</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">25</div>
+                                <div class="stat-label">Questions</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">60</div>
+                                <div class="stat-label">Minutes</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Attempts</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Review</button>
+                            <button class="card-btn primary">Take Test</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Study Guides Tab -->
+        <div id="guides" class="tab-content">
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Biology 101</h3>
+                        <div class="card-subtitle">Comprehensive Guide</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">15</div>
+                                <div class="stat-label">Chapters</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">60%</div>
+                                <div class="stat-label">Complete</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">4.8</div>
+                                <div class="stat-label">Rating</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Download</button>
+                            <button class="card-btn primary">View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Expert Solutions Tab -->
+        <div id="solutions" class="tab-content">
+            <div class="empty-state">
+                <div class="empty-state-icon">📝</div>
+                <h3 class="empty-state-title">No Expert Solutions Yet</h3>
+                <p class="empty-state-text">Get help with difficult problems from our experts.</p>
+                <button class="create-btn">Get Expert Help</button>
+            </div>
+        </div>
+        
+        <!-- Folders Tab -->
+        <div id="folders" class="tab-content">
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Science Materials</h3>
+                        <div class="card-subtitle">3 items</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">2</div>
+                                <div class="stat-label">Flashcards</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">1</div>
+                                <div class="stat-label">Tests</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Guides</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Edit</button>
+                            <button class="card-btn primary">Open</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Math Resources</h3>
+                        <div class="card-subtitle">2 items</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">1</div>
+                                <div class="stat-label">Flashcards</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">1</div>
+                                <div class="stat-label">Tests</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Guides</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn">Edit</button>
+                            <button class="card-btn primary">Open</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Classes Tab -->
+        <div id="classes" class="tab-content">
+            <div class="empty-state">
+                <div class="empty-state-icon">👨‍🏫</div>
+                <h3 class="empty-state-title">No Classes Yet</h3>
+                <p class="empty-state-text">Join a class or create your own to collaborate with others.</p>
+                <button class="create-btn">Join or Create Class</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function switchTab(tabId) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Deactivate all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Activate the selected tab and content
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>

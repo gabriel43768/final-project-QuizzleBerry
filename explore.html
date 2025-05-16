@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore - Quizzleberry</title>
+    <style>
+        :root {
+            --primary: #4b2c91;
+            --primary-light: #9747ff;
+            --primary-dark: #3a2170;
+            --secondary: #10b981;
+            --light-bg: #f8f9fa;
+            --border: #e5e7eb;
+            --text: #333;
+            --text-light: #6b7280;
+            --white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background-color: var(--white);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+        
+        .sidebar-logo {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            padding: 0 1rem;
+        }
+        
+        .sidebar-nav-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-nav-link:hover, .sidebar-nav-link.active {
+            background-color: rgba(151, 71, 255, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-nav-link i {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+        
+        .user-name {
+            font-weight: 500;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 240px;
+            padding: 2rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+        
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            padding: 0.75rem 1.5rem;
+            width: 100%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .search-bar input {
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            padding: 0.25rem 0;
+            font-size: 1rem;
+        }
+        
+        .search-bar i {
+            color: var(--text-light);
+            margin-right: 0.5rem;
+            font-size: 1.25rem;
+        }
+        
+        .search-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 9999px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-left: 1rem;
+        }
+        
+        .search-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        /* Categories */
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        
+        .category {
+            background-color: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .category:hover, .category.active {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+        }
+        
+        /* Results */
+        .results-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .results-count {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .sort-dropdown {
+            position: relative;
+        }
+        
+        .sort-btn {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            font-size: 0.875rem;
+            color: var(--text);
+            cursor: pointer;
+        }
+        
+        .sort-btn i {
+            margin-left: 0.5rem;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .card {
+            background-color: var(--white);
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            padding: 1.5rem;
+            color: var(--white);
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-subtitle {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .card-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-author-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+        }
+        
+        .card-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .card-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            background-color: var(--white);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .card-btn:hover {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+        
+        .card-btn.primary {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+        
+        .card-btn.primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background-color: var(--white);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .page-btn:hover, .page-btn.active {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 1rem;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar-nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 0.5rem 0;
+            }
+            
+            .sidebar-nav-item {
+                margin-right: 0.5rem;
+                margin-bottom: 0;
+            }
+            
+            .sidebar-footer {
+                display: none;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .search-container {
+                max-width: 100%;
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Icons (using Unicode for simplicity) */
+        .icon {
+            font-style: normal;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="111.png" alt="Quizzleberry Logo" class="sidebar-logo">
+            <div class="sidebar-brand">Quizzleberry</div>
+        </div>
+        
+        <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+                <a href="index.html" class="sidebar-nav-link active">
+                    <i class="icon">🏠</i> Home
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="library.html" class="sidebar-nav-link">
+                    <i class="icon">📚</i> My Library
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="explore.html" class="sidebar-nav-link">
+                    <i class="icon">🔍</i> Explore
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="progress.html" class="sidebar-nav-link">
+                    <i class="icon">📊</i> Progress
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="leaderboard.html" class="sidebar-nav-link">
+                    <i class="icon">🏆</i> Leaderboard
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="settings.html" class="sidebar-nav-link">
+                    <i class="icon">⚙️</i> Settings
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="login.html" class="sidebar-nav-link">
+                    <i class="icon">👤</i> Register
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">D</div>
+                <div class="user-name">Demo User</div>
+            </div>
+        </div>
+    </div>*
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1 class="page-title">Explore</h1>
+        </div>
+        
+        <div class="search-container">
+            <form onsubmit="searchQuizzes(event)">
+                <div class="search-bar">
+                    <i class="icon">🔍</i>
+                    <input type="text" id="searchInput" placeholder="Search for quizzes, flashcards, or topics..." value="">
+                    <button type="submit" class="search-btn">Search</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="categories">
+            <div class="category active" onclick="filterByCategory(this, 'all')">All</div>
+            <div class="category" onclick="filterByCategory(this, 'science')">Science</div>
+            <div class="category" onclick="filterByCategory(this, 'math')">Mathematics</div>
+            <div class="category" onclick="filterByCategory(this, 'history')">History</div>
+            <div class="category" onclick="filterByCategory(this, 'language')">Languages</div>
+            <div class="category" onclick="filterByCategory(this, 'arts')">Arts</div>
+            <div class="category" onclick="filterByCategory(this, 'computer')">Computer Science</div>
+            <div class="category" onclick="filterByCategory(this, 'business')">Business</div>
+        </div>
+        
+        <div class="results-info">
+            <div class="results-count">Showing <span id="resultCount">12</span> results</div>
+            <div class="sort-dropdown">
+                <button class="sort-btn" onclick="toggleSortOptions()">
+                    Sort by: <span id="currentSort">Relevance</span> <i class="icon">▼</i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="card-grid" id="searchResults">
+            <!-- Search results will be populated here -->
+            <div class="card" data-category="science">
+                <div class="card-header">
+                    <h3 class="card-title">Advanced Biology</h3>
+                    <div class="card-subtitle">Cell Biology, Genetics, Ecology</div>
+                </div>
+                <div class="card-body">
+                    <div class="card-meta">
+                        <div class="card-author">
+                            <div class="card-author-avatar">J</div>
+                            <span>JaneDoe</span>
+                        </div>
+                        <div>2 weeks ago</div>
+                    </div>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <div class="stat-value">65</div>
+                            <div class="stat-label">Cards</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.8</div>
+                            <div class="stat-label">Rating</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">2.5k</div>
+                            <div class="stat-label">Users</div>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="card-btn">Preview</button>
+                        <button class="card-btn primary">Study</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" data-category="math">
+                <div class="card-header">
+                    <h3 class="card-title">Calculus Fundamentals</h3>
+                    <div class="card-subtitle">Limits, Derivatives, Integrals</div>
+                </div>
+                <div class="card-body">
+                    <div class="card-meta">
+                        <div class="card-author">
+                            <div class="card-author-avatar">M</div>
+                            <span>MathPro</span>
+                        </div>
+                        <div>1 month ago</div>
+                    </div>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <div class="stat-value">48</div>
+                            <div class="stat-label">Cards</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.9</div>
+                            <div class="stat-label">Rating</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">3.2k</div>
+                            <div class="stat-label">Users</div>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="card-btn">Preview</button>
+                        <button class="card-btn primary">Study</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" data-category="history">
+                <div class="card-header">
+                    <h3 class="card-title">World War II</h3>
+                    <div class="card-subtitle">Key Events, Figures, and Impacts</div>
+                </div>
+                <div class="card-body">
+                    <div class="card-meta">
+                        <div class="card-author">
+                            <div class="card-author-avatar">H</div>
+                            <span>HistoryBuff</span>
+                        </div>
+                        <div>3 days ago</div>
+                    </div>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <div class="stat-value">72</div>
+                            <div class="stat-label">Cards</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.7</div>
+                            <div class="stat-label">Rating</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">1.8k</div>
+                            <div class="stat-label">Users</div>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="card-btn">Preview</button>
+                        <button class="card-btn primary">Study</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" data-category="language">
+                <div class="card-header">
+                    <h3 class="card-title">Spanish Essentials</h3>
+                    <div class="card-subtitle">Vocabulary, Grammar, Conversation</div>
+                </div>
+                <div class="card-body">
+                    <div class="card-meta">
+                        <div class="card-author">
+                            <div class="card-author-avatar">L</div>
+                            <span>LinguaLover</span>
+                        </div>
+                        <div>1 week ago</div>
+                    </div>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <div class="stat-value">120</div>
+                            <div class="stat-label">Cards</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.6</div>
+                            <div class="stat-label">Rating</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">5.4k</div>
+                            <div class="stat-label">Users</div>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="card-btn">Preview</button>
+                        <button class="card-btn primary">Study</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pagination">
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">4</button>
+            <button class="page-btn">5</button>
+            <button class="page-btn">→</button>
+        </div>
+    </div>
+    
+    <script>
+        function searchQuizzes(event) {
+            event.preventDefault();
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
+            let count = 0;
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const subtitle = card.querySelector('.card-subtitle').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || subtitle.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    count++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('resultCount').textContent = count;
+        }
+        
+        function filterByCategory(element, category) {
+            // Update active category
+            const categories = document.querySelectorAll('.category');
+            categories.forEach(cat => cat.classList.remove('active'));
+            element.classList.add('active');
+            
+            // Filter cards
+            const cards = document.querySelectorAll('.card');
+            let count = 0;
+            
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                    count++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('resultCount').textContent = count;
+        }
+        
+        function toggleSortOptions() {
+            // In a real implementation, this would show a dropdown
+            const sortOptions = ['Relevance', 'Most Recent', 'Highest Rated', 'Most Popular'];
+            const currentSort = document.getElementById('currentSort').textContent;
+            const nextIndex = (sortOptions.indexOf(currentSort) + 1) % sortOptions.length;
+            document.getElementById('currentSort').textContent = sortOptions[nextIndex];
+        }
+    </script>
+</body>
+</html>

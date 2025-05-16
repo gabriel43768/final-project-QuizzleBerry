@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress - Quizzleberry</title>
+    <style>
+        :root {
+            --primary: #4b2c91;
+            --primary-light: #9747ff;
+            --primary-dark: #3a2170;
+            --secondary: #10b981;
+            --light-bg: #f8f9fa;
+            --border: #e5e7eb;
+            --text: #333;
+            --text-light: #6b7280;
+            --white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background-color: var(--white);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+        
+        .sidebar-logo {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            padding: 0 1rem;
+        }
+        
+        .sidebar-nav-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-nav-link:hover, .sidebar-nav-link.active {
+            background-color: rgba(151, 71, 255, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-nav-link i {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+        
+        .user-name {
+            font-weight: 500;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 240px;
+            padding: 2rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+        
+        .time-filter {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background-color: var(--white);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background-color: var(--white);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .stat-card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-card-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+        }
+        
+        .progress-chart {
+            background-color: var(--white);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .chart-bars {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 250px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .chart-bar {
+            width: 40px;
+            background-color: var(--primary-light);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+        
+        .chart-bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        
+        .chart-y-axis {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .chart-y-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            transform: translateY(50%);
+        }
+        
+        .subject-progress {
+            background-color: var(--white);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .progress-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .progress-item {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+        
+        .progress-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-item-title {
+            font-weight: 600;
+        }
+        
+        .progress-item-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .progress-bar-container {
+            height: 8px;
+            background-color: var(--light-bg);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 4px;
+        }
+        
+        .recent-activity {
+            background-color: var(--white);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .activity-list {
+            list-style: none;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(151, 71, 255, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        
+        .activity-score {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 1rem;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar-nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 0.5rem 0;
+            }
+            
+            .sidebar-nav-item {
+                margin-right: 0.5rem;
+                margin-bottom: 0;
+            }
+            
+            .sidebar-footer {
+                display: none;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .progress-list {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Icons (using Unicode for simplicity) */
+        .icon {
+            font-style: normal;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="111.png" alt="Quizzleberry Logo" class="sidebar-logo">
+            <div class="sidebar-brand">Quizzleberry</div>
+        </div>
+        
+        <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+                <a href="index.html" class="sidebar-nav-link active">
+                    <i class="icon">🏠</i> Home
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="library.html" class="sidebar-nav-link">
+                    <i class="icon">📚</i> My Library
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="explore.html" class="sidebar-nav-link">
+                    <i class="icon">🔍</i> Explore
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="progress.html" class="sidebar-nav-link">
+                    <i class="icon">📊</i> Progress
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="leaderboard.html" class="sidebar-nav-link">
+                    <i class="icon">🏆</i> Leaderboard
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="settings.html" class="sidebar-nav-link">
+                    <i class="icon">⚙️</i> Settings
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="login.html" class="sidebar-nav-link">
+                    <i class="icon">👤</i> Register
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">D</div>
+                <div class="user-name">Demo User</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1 class="page-title">Your Progress</h1>
+            
+            <div class="time-filter">
+                <button class="filter-btn">Day</button>
+                <button class="filter-btn active">Week</button>
+                <button class="filter-btn">Month</button>
+                <button class="filter-btn">Year</button>
+                <button class="filter-btn">All Time</button>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-value">12</div>
+                <div class="stat-card-label">Study Sessions</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-card-value">4.5</div>
+                <div class="stat-card-label">Hours Studied</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-card-value">85%</div>
+                <div class="stat-card-label">Average Score</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-card-value">320</div>
+                <div class="stat-card-label">Cards Mastered</div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">Weekly Activity</h2>
+        
+        <div class="progress-chart">
+            <div class="chart-container">
+                <div class="chart-y-axis">
+                    <div class="chart-y-label">60 min</div>
+                    <div class="chart-y-label">45 min</div>
+                    <div class="chart-y-label">30 min</div>
+                    <div class="chart-y-label">15 min</div>
+                    <div class="chart-y-label">0 min</div>
+                </div>
+                <div class="chart-bars">
+                    <div class="chart-bar" style="height: 30%;">
+                        <div class="chart-bar-label">Mon</div>
+                    </div>
+                    <div class="chart-bar" style="height: 60%;">
+                        <div class="chart-bar-label">Tue</div>
+                    </div>
+                    <div class="chart-bar" style="height: 45%;">
+                        <div class="chart-bar-label">Wed</div>
+                    </div>
+                    <div class="chart-bar" style="height: 75%;">
+                        <div class="chart-bar-label">Thu</div>
+                    </div>
+                    <div class="chart-bar" style="height: 90%;">
+                        <div class="chart-bar-label">Fri</div>
+                    </div>
+                    <div class="chart-bar" style="height: 20%;">
+                        <div class="chart-bar-label">Sat</div>
+                    </div>
+                    <div class="chart-bar" style="height: 10%;">
+                        <div class="chart-bar-label">Sun</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">Subject Progress</h2>
+        
+        <div class="subject-progress">
+            <div class="progress-list">
+                <div class="progress-item">
+                    <div class="progress-item-header">
+                        <div class="progress-item-title">Science Quiz</div>
+                        <div class="progress-item-value">75%</div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 75%;"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-item">
+                    <div class="progress-item-header">
+                        <div class="progress-item-title">Math Challenge</div>
+                        <div class="progress-item-value">40%</div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 40%;"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-item">
+                    <div class="progress-item-header">
+                        <div class="progress-item-title">History Facts</div>
+                        <div class="progress-item-value">90%</div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 90%;"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-item">
+                    <div class="progress-item-header">
+                        <div class="progress-item-title">Geography</div>
+                        <div class="progress-item-value">10%</div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 10%;"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-item">
+                    <div class="progress-item-header">
+                        <div class="progress-item-title">Spanish Essentials</div>
+                        <div class="progress-item-value">55%</div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 55%;"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-item">
+                    <div class="progress-item-header">
+                        <div class="progress-item-title">Computer Science</div>
+                        <div class="progress-item-value">65%</div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 65%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">Recent Activity</h2>
+        
+        <div class="recent-activity">
+            <ul class="activity-list">
+                <li class="activity-item">
+                    <div class="activity-icon">🧪</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Completed Science Quiz</div>
+                        <div class="activity-time">Today, 10:30 AM</div>
+                    </div>
+                    <div class="activity-score">85%</div>
+                </li>
+                
+                <li class="activity-item">
+                    <div class="activity-icon">📜</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Studied History Facts</div>
+                        <div class="activity-time">Yesterday, 3:45 PM</div>
+                    </div>
+                    <div class="activity-score">20 min</div>
+                </li>
+                
+                <li class="activity-item">
+                    <div class="activity-icon">🔢</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Practiced Math Challenge</div>
+                        <div class="activity-time">2 days ago</div>
+                    </div>
+                    <div class="activity-score">70%</div>
+                </li>
+                
+                <li class="activity-item">
+                    <div class="activity-icon">🌍</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Started Geography</div>
+                        <div class="activity-time">3 days ago</div>
+                    </div>
+                    <div class="activity-score">New</div>
+                </li>
+                
+                <li class="activity-item">
+                    <div class="activity-icon">💻</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Reviewed Computer Science</div>
+                        <div class="activity-time">5 days ago</div>
+                    </div>
+                    <div class="activity-score">45 min</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Time filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // In a real implementation, this would update the data based on the selected time period
+                // For this demo, we'll just show an alert
+                alert(`Showing data for: ${button.textContent}`);
+            });
+        });
+    </script>
+</body>
+</html>
