@@ -633,14 +633,14 @@
                 </div>
                 
                 <ul class="nav-links">
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.php">Home</a></li>
                     <li><a href="#features">Features</a></li>
                     <li><a href="about.html">About Us</a></li>
                 </ul>
                 
                 <div class="auth-buttons">
-                    <a href="login.html" class="login-btn">Log In</a>
-                    <a href="register.html" class="signup-btn">Sign Up Free</a>
+                    <a href="login.php" class="login-btn">Log In</a>
+                    <a href="register.php" class="signup-btn">Sign Up Free</a>
                 </div>
                 
                 <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
@@ -656,8 +656,8 @@
         </ul>
         
         <div class="mobile-auth-buttons">
-            <a href="login.html" class="login-btn">Log In</a>
-            <a href="register.html" class="signup-btn">Sign Up Free</a>
+            <a href="login.php" class="login-btn">Log In</a>
+            <a href="register.php" class="signup-btn">Sign Up Free</a>
         </div>
     </div>
     
@@ -667,7 +667,7 @@
         <div class="hero-content">
             <h1>Transform Your Study Experience with Active Learning</h1>
             <p>Study smart, not just hard. With Quizzleberry, you can effortlessly create your own flashcards and timed tests or choose from ready-made sets— all designed to help you learn more effectively and efficiently.</p>
-            <a href="register.html" class="cta-btn">Get Started for Free</a>
+            <a href="register.php" class="cta-btn">Get Started for Free</a>
         </div>
         <img src="quizzleberry dashboard.png" width="800" height="450" alt="Quizzleberry Dashboard Preview" class="hero-image" loading="lazy">
     </div>
@@ -693,7 +693,7 @@
                 <div class="feature-icon">⏲️</div>
                 <h3 class="feature-title">Timed Quizzes</h3>
                 <p class="feature-description">
-                   Use the Quiz already available on the platform or create your own timed quizzes to simulate exam conditions, improve time management, and boost confidence.
+                   Use the practice tests already available on the platform or create your own timed quizzes to simulate exam conditions, improve time management, and boost confidence.
                 </p>
             </div>
         </div>
@@ -709,7 +709,7 @@
                 Quizzleberry empowers you with easy quiz creation, secure login, interactive flashcards, timed tests, and automated scoring — all on any device.
             </p>
             <p>Join a community embracing smarter study methods with our innovative tools.</p>
-            <a href="register.html" class="cta-btn">Get Started for Free</a>
+            <a href="register.php" class="cta-btn">Get Started for Free</a>
         </div>
     </div>
 </section>

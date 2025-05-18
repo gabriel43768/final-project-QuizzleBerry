@@ -1,3 +1,66 @@
+<?php
+include_once("connection.php");
+session_start();
+
+$con = connection();
+
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$userId = $_SESSION['user_id'];
+$errors = [];
+$success = false;
+
+// Fetch user data
+$userQuery = $con->prepare("SELECT * FROM users WHERE id = ?");
+$userQuery->bind_param("i", $userId);
+$userQuery->execute();
+$user = $userQuery->get_result()->fetch_assoc();
+
+// Handle form submission for updating user information
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['update_account'])) {
+        $fullname = trim($_POST["fullname"]);
+        $email = trim($_POST["email"]);
+
+        // Validate inputs
+        if (empty($fullname)) {
+            $errors[] = "Full name is required.";
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = "Invalid email format.";
+        }
+
+        // Check if email is already used by another user
+        $checkEmail = $con->prepare("SELECT * FROM users WHERE email = ? AND id != ?");
+        $checkEmail->bind_param("si", $email, $userId);
+        $checkEmail->execute();
+        $checkResult = $checkEmail->get_result();
+
+        if ($checkResult->num_rows > 0) {
+            $errors[] = "Email is already in use by another account.";
+        }
+
+        // Update user information if no errors
+        if (empty($errors)) {
+            $updateQuery = $con->prepare("UPDATE users SET fullname = ?, email = ? WHERE id = ?");
+            $updateQuery->bind_param("ssi", $fullname, $email, $userId);
+
+            if ($updateQuery->execute()) {
+                $success = true;
+                $user['fullname'] = $fullname;
+                $user['email'] = $email;
+            } else {
+                $errors[] = "Failed to update account. Please try again.";
+            }
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
