@@ -4,24 +4,167 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quizzleberry Dashboard</title>
-    <!-- PDF.js library for PDF processing -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <style>
         :root {
-            --primary: #4b2c91;
-            --primary-light: #9747ff;
-            --primary-dark: #3a2170;
-            --secondary: #10b981;
-            --flashcard-primary: #e95678;
-            --flashcard-light: #f06e92;
-            --flashcard-dark: #d34163;
-            --light-bg: #f8f9fa;
-            --border: #e5e7eb;
-            --text: #333;
-            --text-light: #6b7280;
-            --white: #ffffff;
-            --red: #ef4444;
-            --green: #22c55e;
+           --primary: #4b2c91;
+           --primary-light: #9747ff;
+           --primary-dark: #3a2170;
+           --secondary: #10b981;
+           --flashcard-primary: #4ca64c;
+           --flashcard-light: #5eba5e;
+           --flashcard-dark: #3a8a3a;
+           --light-bg: #f8f9fa;
+           --border: #e5e7eb;
+           --text: #333;
+           --text-light: #6b7280;
+           --white: #ffffff;
+           --red: #ef4444;
+           --green: #22c55e;
+            
+            /* Berry palette colors */
+             --berry-purple-dark: #3a2170;
+             --berry-purple: #5e3a96;
+             --berry-purple-medium: #7e56c2;
+             --berry-lavender: #a98bd3;
+             --berry-green-light: #a3e6a3;
+             --berry-green: #4ca64c;
+}
+
+        /* Berry Background Animation */
+        .berry-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-6index: -1;
+            overflow: hidden;
+            opacity: 0.7;
+        }
+
+        .berry-bubble {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            filter: blur(8px);
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .berry-bubble:nth-child(1) {
+            width: 150px;
+            height: 150px;
+            background-color: var(--berry-purple-dark);
+            left: 10%;
+            top: 20%;
+            animation-delay: 0s;
+            animation-duration: 25s;
+        }
+
+        .berry-bubble:nth-child(2) {
+            width: 100px;
+            height: 100px;
+            background-color: var(--berry-purple);
+            left: 30%;
+            top: 60%;
+            animation-delay: 2s;
+            animation-duration: 18s;
+        }
+
+        .berry-bubble:nth-child(3) {
+            width: 180px;
+            height: 180px;
+            background-color: var(--berry-purple-medium);
+            right: 25%;
+            top: 15%;
+            animation-delay: 5s;
+            animation-duration: 20s;
+        }
+
+        .berry-bubble:nth-child(4) {
+            width: 120px;
+            height: 120px;
+            background-color: var(--berry-lavender);
+            right: 10%;
+            bottom: 20%;
+            animation-delay: 1s;
+            animation-duration: 22s;
+        }
+
+        .berry-bubble:nth-child(5) {
+            width: 200px;
+            height: 200px;
+            background-color: var(--berry-pink-light);
+            left: 40%;
+            bottom: 10%;
+            animation-delay: 3s;
+            animation-duration: 19s;
+        }
+
+        .berry-bubble:nth-child(6) {
+            width: 160px;
+            height: 160px;
+            background-color: var(--berry-pink);
+            right: 35%;
+            top: 50%;
+            animation-delay: 7s;
+            animation-duration: 23s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            25% {
+                transform: translate(5%, 10%) rotate(5deg) scale(1.05);
+            }
+            50% {
+                transform: translate(-5%, 15%) rotate(-5deg) scale(0.95);
+            }
+            75% {
+                transform: translate(8%, 5%) rotate(8deg) scale(1.1);
+            }
+            100% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+        }
+
+        /* Update body background */
+        body {
+            background-color: var(--white);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Update main content to have a gradient background */
+        .main-content {
+            flex: 1;
+            margin-left: 240px;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(169, 139, 211, 0.3));
+            backdrop-filter: blur(5px);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            z-index: 1;
+            position: relative;
+        }
+
+        /* Update sidebar to have a gradient background */
+        .sidebar {
+            width: 240px;
+            background: linear-gradient(to bottom, #4b2c91, #7e56c2);
+            backdrop-filter: blur(5px);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 2;
+            color: white;
         }
         
         * {
@@ -30,28 +173,8 @@
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        
-        body {
-            background-color: var(--light-bg);
-            color: var(--text);
-            line-height: 1.6;
-            display: flex;
-            min-height: 100vh;
-        }
-        
+    
         /* Sidebar */
-        .sidebar {
-            width: 240px;
-            background-color: var(--white);
-            border-right: 1px solid var(--border);
-            padding: 1.5rem 0;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-        
         .sidebar-header {
             display: flex;
             align-items: center;
@@ -65,10 +188,11 @@
             margin-right: 10px;
         }
         
+        /* Update sidebar-brand for better contrast */
         .sidebar-brand {
             font-size: 1.25rem;
             font-weight: bold;
-            color: var(--primary);
+            color: white;
         }
         
         .sidebar-nav {
@@ -80,19 +204,20 @@
             margin-bottom: 0.5rem;
         }
         
+        /* Update sidebar-nav-link to have better contrast with the new background */
         .sidebar-nav-link {
             display: flex;
             align-items: center;
             padding: 0.75rem 1rem;
-            color: var(--text);
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
             border-radius: 0.5rem;
             transition: all 0.2s;
         }
-        
+
         .sidebar-nav-link:hover, .sidebar-nav-link.active {
-            background-color: rgba(151, 71, 255, 0.1);
-            color: var(--primary);
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
         }
         
         .sidebar-nav-link i {
@@ -100,40 +225,9 @@
             font-size: 1.25rem;
         }
         
-        .sidebar-footer {
-            margin-top: auto;
-            padding: 1rem 1.5rem;
-            border-top: 1px solid var(--border);
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-        }
-        
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: var(--primary-light);
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 0.75rem;
-        }
-        
-        .user-name {
-            font-weight: 500;
-        }
         
         /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 240px;
-            padding: 2rem;
-        }
+        
         
         .header {
             display: flex;
@@ -142,28 +236,6 @@
             margin-bottom: 2rem;
         }
         
-        .search-bar {
-            display: flex;
-            align-items: center;
-            background-color: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 9999px;
-            padding: 0.5rem 1rem;
-            width: 300px;
-        }
-        
-        .search-bar input {
-            border: none;
-            outline: none;
-            background: transparent;
-            width: 100%;
-            padding: 0.25rem 0;
-        }
-        
-        .search-bar i {
-            color: var(--text-light);
-            margin-right: 0.5rem;
-        }
         
         .create-btn {
             background-color: var(--primary);
@@ -669,7 +741,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .flashcard-card-number {
@@ -744,10 +816,6 @@
             justify-content: center;
             position: relative;
             margin-top: 1rem;
-        }
-
-        .flashcard-image-upload:hover {
-            border-color: var(--primary);
         }
 
         .flashcard-image-icon {
@@ -1328,6 +1396,9 @@
             align-items: center;
             gap: 0.75rem;
             margin-bottom: 1rem;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
         }
         
         .mastery-toggle-label {
@@ -1383,8 +1454,11 @@
         .mastery-buttons {
             display: flex;
             justify-content: center;
-            gap: 1rem;
+            gap: 1.5rem;
             margin-top: 1rem;
+            padding: 0.5rem;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 1rem;
         }
         
         .mastery-btn {
@@ -1397,6 +1471,7 @@
             cursor: pointer;
             transition: all 0.2s;
             border: 2px solid;
+            font-size: 1.25rem;
         }
         
         .mastery-btn.cross {
@@ -1474,9 +1549,29 @@
             border-radius: 0.375rem;
             text-align: center;
         }
+
+        /* Add CSS for active mastery buttons */
+        .mastery-btn.active {
+            background-color: currentColor;
+            color: var(--white);
+        }
+
+        .icon svg {
+            display: inline-block;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
+    <!-- Berry Background Animation -->
+    <div class="berry-background">
+        <div class="berry-bubble"></div>
+        <div class="berry-bubble"></div>
+        <div class="berry-bubble"></div>
+        <div class="berry-bubble"></div>
+        <div class="berry-bubble"></div>
+        <div class="berry-bubble"></div>
+    </div>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
@@ -1485,41 +1580,32 @@
         </div>
         
         <ul class="sidebar-nav">
-            <li class="sidebar-nav-item">
-                <a href="dashboard.html" class="sidebar-nav-link active">
-                    <i class="icon">🏠</i> Home
-                </a>
-            </li>
-            <li class="sidebar-nav-item">
-                <a href="library.html" class="sidebar-nav-link">
-                    <i class="icon">📚</i> My Library
-                </a>
-            </li>
-            <li class="sidebar-nav-item">
-                <a href="settings.html" class="sidebar-nav-link">
-                    <i class="icon">⚙️</i> Settings
-                </a>
-            </li>
-        </ul>
-        
-        <div class="sidebar-footer">
-            <div class="user-info">
-                <div class="user-avatar">D</div>
-                <div class="user-name">Demo User</div>
-            </div>
-        </div>
+    <li class="sidebar-nav-item">
+        <a href="dashboard.html" class="sidebar-nav-link active">
+            <i class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </i> Home
+        </a>
+    </li>
+    <li class="sidebar-nav-item">
+        <a href="settings.html" class="sidebar-nav-link">
+            <i class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            </i> Settings
+        </a>
+    </li>
+</ul>     
     </div>
     
     <!-- Main Content -->
     <div class="main-content">
         <div class="header">
-            <div class="search-bar">
-                <i class="icon">🔍</i>
-                <input type="text" placeholder="Search your quizzes...">
-            </div>
+            
             
             <button class="create-btn" id="create-quiz-btn">
-                <i class="icon">➕</i> Create Quiz
+                <i class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                </i> Create Quiz
             </button>
         </div>
         
@@ -1538,11 +1624,15 @@
         <!-- Empty state for when no quizzes exist -->
         <div id="empty-state" style="display: none;">
             <div class="empty-state">
-                <div class="empty-state-icon">📚</div>
+                <div class="empty-state-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                </div>
                 <h3 class="empty-state-title">No Quiz Sets Yet</h3>
                 <p class="empty-state-message">Create your first quiz set by clicking the "Create Quiz" button above.</p>
                 <button class="btn btn-primary" id="empty-state-create-btn">
-                    <i class="icon">➕</i> Create Your First Quiz
+                    <i class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                    </i> Create Your First Quiz
                 </button>
             </div>
         </div>
@@ -1561,7 +1651,9 @@
                     <div class="option-grid">
                         <div class="option-card" data-option="flashcards">
                             <div class="option-header">
-                                <div class="option-icon">📝</div>
+                                <div class="option-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+                                </div>
                                 <div>
                                     <h4 class="option-title">Flashcard Set</h4>
                                     <p class="option-description">Create digital flashcards for quick study sessions</p>
@@ -1571,7 +1663,9 @@
                         
                         <div class="option-card" data-option="practice-test">
                             <div class="option-header">
-                                <div class="option-icon">✅</div>
+                                <div class="option-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-square"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                </div>
                                 <div>
                                     <h4 class="option-title">Practice Test</h4>
                                     <p class="option-description">Create quizzes with various question types</p>
@@ -1585,7 +1679,9 @@
                 <div id="flashcard-creation-view" style="display: none;">
                     <div class="back-button-container">
                         <button class="btn btn-sm btn-outline back-button" data-target="initial-options">
-                            <i class="icon">←</i> Back
+                            <i class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                            </i> Back
                         </button>
                     </div>
                     
@@ -1607,13 +1703,19 @@
                                 <div class="flashcard-card-number">1</div>
                                 <div class="flashcard-card-actions">
                                     <button class="btn btn-sm btn-outline move-card-up" title="Move up">
-                                        <i class="icon">↑</i>
+                                        <i class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg>
+                                        </i>
                                     </button>
                                     <button class="btn btn-sm btn-outline move-card-down" title="Move down">
-                                        <i class="icon">↓</i>
+                                        <i class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                                        </i>
                                     </button>
                                     <button class="btn btn-sm btn-outline delete-card" title="Delete card">
-                                        <i class="icon">🗑️</i>
+                                        <i class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                        </i>
                                     </button>
                                 </div>
                             </div>
@@ -1635,13 +1737,19 @@
                                 <div class="flashcard-card-number">2</div>
                                 <div class="flashcard-card-actions">
                                     <button class="btn btn-sm btn-outline move-card-up" title="Move up">
-                                        <i class="icon">↑</i>
+                                        <i class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg>
+                                        </i>
                                     </button>
                                     <button class="btn btn-sm btn-outline move-card-down" title="Move down">
-                                        <i class="icon">↓</i>
+                                        <i class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                                        </i>
                                     </button>
                                     <button class="btn btn-sm btn-outline delete-card" title="Delete card">
-                                        <i class="icon">🗑️</i>
+                                        <i class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                        </i>
                                     </button>
                                 </div>
                             </div>
@@ -1659,7 +1767,9 @@
                     </div>
                     
                     <button class="add-card-button" id="add-card-button">
-                        <i class="icon">+</i> Add Card
+                        <i class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                        </i> Add Card
                     </button>
                     
                     <div class="flashcard-footer">
@@ -1672,7 +1782,9 @@
                 <div id="practice-test-view" style="display: none;">
                     <div class="back-button-container">
                         <button class="btn btn-sm btn-outline back-button" data-target="initial-options">
-                            <i class="icon">←</i> Back
+                            <i class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                            </i> Back
                         </button>
                     </div>
                     
@@ -1692,28 +1804,6 @@
                         <div class="timer-input-group">
                             <input type="number" id="test-timer-minutes" class="timer-input" min="1" max="180" value="30">
                             <label for="test-timer-minutes">minutes</label>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Question Types</label>
-                        <div class="option-grid">
-                            <div class="option-card" data-type="multiple-choice">
-                                <div class="option-header">
-                                    <div class="option-icon">🔤</div>
-                                    <div>
-                                        <h4 class="option-title">Multiple Choice</h4>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="option-card" data-type="true-false">
-                                <div class="option-header">
-                                    <div class="option-icon">✓</div>
-                                    <div>
-                                        <h4 class="option-title">True/False</h4>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     
@@ -1811,7 +1901,9 @@
             </div>
             <div class="quiz-player-footer">
                 <div class="quiz-timer">
-                    <i class="icon quiz-timer-icon">⏱️</i>
+                    <i class="icon quiz-timer-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer"><path d="M10 2h4"/><path d="M12 14v-4"/><path d="M4 13a8 8 0 0 1 8-7 8 8 0 1 1-5.3 14L4 17.6"/><path d="M9 17H4v5"/></svg>
+                    </i>
                     <span id="quiz-timer-display">00:00</span>
                 </div>
                 <div class="quiz-progress">
@@ -1843,15 +1935,29 @@
                         <span class="mastery-toggle-slider"></span>
                     </label>
                 </div>
+                <div class="mastery-buttons" id="mastery-buttons" style="display: none;">
+                    <button class="mastery-btn cross" id="mastery-cross-btn" title="Still learning">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                    <button class="mastery-btn check" id="mastery-check-btn" title="Mastered">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                </div>
                 <div class="flashcard-controls">
                     <button class="flashcard-btn" id="flashcard-prev-btn">
-                        <i class="icon">←</i> Previous
+                        <i class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+                        </i> Previous
                     </button>
                     <button class="flashcard-btn" id="flashcard-flip-btn">
-                        <i class="icon">🔄</i> Flip
+                        <i class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-cw"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
+                        </i> Flip
                     </button>
                     <button class="flashcard-btn primary" id="flashcard-next-btn">
-                        Next <i class="icon">→</i>
+                        Next <i class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                        </i>
                     </button>
                 </div>
                 <div class="flashcard-progress">
@@ -1860,1212 +1966,1686 @@
                         <div class="flashcard-progress-fill" id="flashcard-progress-fill" style="width: 10%;"></div>
                     </div>
                 </div>
-                <div class="mastery-buttons" id="mastery-buttons" style="display: none;">
-                    <button class="mastery-btn cross" id="mastery-cross-btn" title="Still learning">✕</button>
-                    <button class="mastery-btn check" id="mastery-check-btn" title="Mastered">✓</button>
-                </div>
             </div>
         </div>
     </div>
     
     <script>
         // Modal functionality
-        const modal = document.getElementById('create-quiz-modal');
-        const createBtn = document.getElementById('create-quiz-btn');
-        const closeBtn = document.getElementById('modal-close');
-        const modalBody = document.getElementById('modal-body');
-        const modalTitle = document.getElementById('modal-title');
-        const initialOptions = document.getElementById('initial-options');
-        const flashcardCreationView = document.getElementById('flashcard-creation-view');
-        const practiceTestView = document.getElementById('practice-test-view');
-        const backButtons = document.querySelectorAll('.back-button');
-        const optionCards = document.querySelectorAll('.option-card');
-        const addCardButton = document.getElementById('add-card-button');
-        const flashcardCardsContainer = document.getElementById('flashcard-cards-container');
-        const saveFlashcardsBtn = document.getElementById('save-flashcards');
-        const cancelFlashcardsBtn = document.getElementById('cancel-flashcards');
-        const createTestBtn = document.getElementById('create-test');
-        const cancelTestBtn = document.getElementById('cancel-test');
-        const addQuestionButton = document.getElementById('add-question-button');
-        const questionsContainer = document.getElementById('questions-container');
-        const quizSetsContainer = document.getElementById('quiz-sets-container');
-        const flashcardSetsContainer = document.getElementById('flashcard-sets-container');
-        const emptyState = document.getElementById('empty-state');
-        const emptyStateCreateBtn = document.getElementById('empty-state-create-btn');
-        
-        // Quiz Player Elements
-        const quizPlayerModal = document.getElementById('quiz-player-modal');
-        const quizPlayerClose = document.getElementById('quiz-player-close');
-        const quizPlayerTitle = document.getElementById('quiz-player-title');
-        const quizPlayerBody = document.getElementById('quiz-player-body');
-        const quizTimerDisplay = document.getElementById('quiz-timer-display');
-        const quizProgressFill = document.getElementById('quiz-progress-fill');
-        const quizProgressText = document.getElementById('quiz-progress-text');
-        const quizNextBtn = document.getElementById('quiz-next-btn');
-        
-        // Flashcard Player Elements
-        const flashcardPlayerModal = document.getElementById('flashcard-player-modal');
-        const flashcardPlayerClose = document.getElementById('flashcard-player-close');
-        const flashcardPlayerTitle = document.getElementById('flashcard-player-title');
-        const flashcardPlayerBody = document.getElementById('flashcard-player-body');
-        const flashcardPrevBtn = document.getElementById('flashcard-prev-btn');
-        const flashcardFlipBtn = document.getElementById('flashcard-flip-btn');
-        const flashcardNextBtn = document.getElementById('flashcard-next-btn');
-        const flashcardCounter = document.getElementById('flashcard-counter');
-        const flashcardProgressFill = document.getElementById('flashcard-progress-fill');
-        const masteryToggleCheckbox = document.getElementById('mastery-toggle-checkbox');
-        const masteryButtons = document.getElementById('mastery-buttons');
-        const masteryCrossBtn = document.getElementById('mastery-cross-btn');
-        const masteryCheckBtn = document.getElementById('mastery-check-btn');
-        
-        let cardCounter = 2; // Start at 2 since we already have 2 cards
-        let questionCounter = 1; // Start at 1 since we already have 1 question
-        
-        // Quiz Player Variables
-        let currentQuiz = null;
-        let currentQuizIndex = 0;
-        let quizTimer = null;
-        let quizStartTime = 0;
-        let quizUserAnswers = [];
-        let quizScores = {}; // Track quiz scores
-        let quizTimeLimit = 0; // Time limit in minutes
-        
-        // Flashcard Player Variables
-        let currentFlashcardSet = null;
-        let currentFlashcardIndex = 0;
-        let isFlashcardFlipped = false;
-        let flashcardMasteryData = {}; // Track mastery data for flashcards
-        
-        // Initialize the dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            loadQuizSets();
-            
-            // Empty state create button
-            if (emptyStateCreateBtn) {
-                emptyStateCreateBtn.addEventListener('click', function() {
-                    modal.classList.add('active');
-                    showView(initialOptions);
-                    modalTitle.textContent = 'Create New';
-                });
-            }
-            
-            // Mastery toggle
-            masteryToggleCheckbox.addEventListener('change', function() {
-                if (this.checked) {
-                    masteryButtons.style.display = 'flex';
-                } else {
-                    masteryButtons.style.display = 'none';
-                }
-            });
-            
-            // Mastery buttons
-            masteryCrossBtn.addEventListener('click', function() {
-                markCardMastery(false);
-                moveToNextCard();
-            });
-            
-            masteryCheckBtn.addEventListener('click', function() {
-                markCardMastery(true);
-                moveToNextCard();
-            });
-        });
-        
-        // Load quiz sets from localStorage
-        function loadQuizSets() {
-            let flashcardSets = [];
-            let practiceTests = [];
-            
-            try {
-                const savedFlashcardSets = localStorage.getItem('flashcardSets');
-                if (savedFlashcardSets) {
-                    flashcardSets = JSON.parse(savedFlashcardSets);
-                }
-                
-                const savedPracticeTests = localStorage.getItem('practiceTests');
-                if (savedPracticeTests) {
-                    practiceTests = JSON.parse(savedPracticeTests);
-                }
-                
-                // Load quiz scores
-                const savedScores = localStorage.getItem('quizScores');
-                if (savedScores) {
-                    quizScores = JSON.parse(savedScores);
-                }
-                
-                // Load flashcard mastery data
-                const savedMasteryData = localStorage.getItem('flashcardMasteryData');
-                if (savedMasteryData) {
-                    flashcardMasteryData = JSON.parse(savedMasteryData);
-                }
-            } catch (e) {
-                console.error('Error loading quiz sets:', e);
-            }
-            
-            // Check if we have any user-created content
-            const hasUserContent = flashcardSets.length > 0 || practiceTests.length > 0;
-            
-            // Show/hide empty state
-            emptyState.style.display = hasUserContent ? 'none' : 'block';
-            
-            // Clear existing user-created cards
-            const existingFlashcardCards = flashcardSetsContainer.querySelectorAll('.user-created-card');
-            existingFlashcardCards.forEach(card => card.remove());
-            
-            const existingQuizCards = quizSetsContainer.querySelectorAll('.user-created-card');
-            existingQuizCards.forEach(card => card.remove());
-            
-            // Add flashcard sets to the dashboard
-            flashcardSets.forEach(set => {
-                addCardToGrid(set, 'flashcard');
-            });
-            
-            // Add practice tests to the dashboard
-            practiceTests.forEach(test => {
-                addCardToGrid(test, 'practice-test');
-            });
-        }
-        
-        // Add a card to the grid
-        function addCardToGrid(item, type) {
-            const card = document.createElement('div');
-            card.className = 'card user-created-card';
-            card.setAttribute('data-id', item.created_at);
-            
-            // Get the mastered percentage
-            let masteredPercentage = "0%";
-            if (type === 'practice-test' && quizScores[item.created_at]) {
-                masteredPercentage = quizScores[item.created_at] + "%";
-            } else if (type === 'flashcard' && flashcardMasteryData[item.created_at]) {
-                const masteryData = flashcardMasteryData[item.created_at];
-                const totalCards = item.cards.length;
-                const masteredCards = Object.values(masteryData).filter(value => value === true).length;
-                masteredPercentage = Math.round((masteredCards / totalCards) * 100) + "%";
-            }
-            
-            const cardContent = `
-                <div class="card-header ${type === 'flashcard' ? 'flashcard' : ''}">
-                    <h3 class="card-title">${item.title}</h3>
-                    <div class="card-subtitle">${item.description || (type === 'flashcard' ? 'Flashcard Set' : 'Practice Test')}</div>
-                    <div class="card-menu">
-                        <button class="card-menu-btn" aria-label="Card menu">
-                            <i class="icon">⋮</i>
-                        </button>
-                        <div class="card-menu-dropdown">
-                            <div class="card-menu-item edit-item">
-                                <i class="icon">✏️</i> Edit
-                            </div>
-                            <div class="card-menu-item delete-item">
-                                <i class="icon">🗑️</i> Delete
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="card-stats">
-                        <div class="stat">
-                            <div class="stat-value">${type === 'flashcard' ? item.cards.length : item.questions.length}</div>
-                            <div class="stat-label">${type === 'flashcard' ? 'Cards' : 'Questions'}</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-value">${masteredPercentage}</div>
-                            <div class="stat-label">Mastered</div>
-                        </div>
-                    </div>
-                    <div class="card-actions">
-                        ${type === 'flashcard' ? 
-                        '<button class="card-btn flashcard" data-id="' + item.created_at + '" data-type="' + type + '">Study</button>' : 
-                        '<button class="card-btn primary" data-id="' + item.created_at + '" data-type="' + type + '">Quiz</button>'}
-                    </div>
-                </div>
-            `;
-            
-            card.innerHTML = cardContent;
-            
-            // Add the card to the appropriate container
-            if (type === 'flashcard') {
-                flashcardSetsContainer.appendChild(card);
-            } else {
-                quizSetsContainer.appendChild(card);
-            }
-            
-            // Add event listeners to the buttons
-            if (type === 'flashcard') {
-                const studyBtn = card.querySelector('.card-btn');
-                studyBtn.addEventListener('click', function() {
-                    openFlashcardPlayer(item, 'study');
-                });
-            } else {
-                const quizBtn = card.querySelector('.card-btn');
-                quizBtn.addEventListener('click', function() {
-                    openQuizPlayer(item, 'quiz');
-                });
-            }
-            
-            // Add event listeners for card menu
-            const menuBtn = card.querySelector('.card-menu-btn');
-            const menuDropdown = card.querySelector('.card-menu-dropdown');
-            
-            menuBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                menuDropdown.classList.toggle('active');
-                
-                // Close other open menus
-                document.querySelectorAll('.card-menu-dropdown.active').forEach(dropdown => {
-                    if (dropdown !== menuDropdown) {
-                        dropdown.classList.remove('active');
-                    }
-                });
-            });
-            
-            // Edit button
-            const editBtn = card.querySelector('.edit-item');
-            editBtn.addEventListener('click', function() {
-                // Implement edit functionality
-                alert('Edit functionality will be implemented here');
-                menuDropdown.classList.remove('active');
-            });
-            
-            // Delete button
-            const deleteBtn = card.querySelector('.delete-item');
-            deleteBtn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to delete this item?')) {
-                    deleteItem(item.created_at, type);
-                }
-                menuDropdown.classList.remove('active');
-            });
-            
-            // Close menu when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!card.contains(e.target)) {
-                    menuDropdown.classList.remove('active');
-                }
-            });
-        }
-        
-        // Delete an item
-        function deleteItem(id, type) {
-            try {
-                if (type === 'flashcard') {
-                    let flashcardSets = [];
-                    const savedFlashcardSets = localStorage.getItem('flashcardSets');
-                    if (savedFlashcardSets) {
-                        flashcardSets = JSON.parse(savedFlashcardSets);
-                        const updatedSets = flashcardSets.filter(set => set.created_at !== id);
-                        localStorage.setItem('flashcardSets', JSON.stringify(updatedSets));
-                    }
-                    
-                    // Remove mastery data
-                    if (flashcardMasteryData[id]) {
-                        delete flashcardMasteryData[id];
-                        localStorage.setItem('flashcardMasteryData', JSON.stringify(flashcardMasteryData));
-                    }
-                } else {
-                    let practiceTests = [];
-                    const savedPracticeTests = localStorage.getItem('practiceTests');
-                    if (savedPracticeTests) {
-                        practiceTests = JSON.parse(savedPracticeTests);
-                        const updatedTests = practiceTests.filter(test => test.created_at !== id);
-                        localStorage.setItem('practiceTests', JSON.stringify(updatedTests));
-                    }
-                    
-                    // Remove score data
-                    if (quizScores[id]) {
-                        delete quizScores[id];
-                        localStorage.setItem('quizScores', JSON.stringify(quizScores));
-                    }
-                }
-                
-                // Refresh the dashboard
-                loadQuizSets();
-            } catch (e) {
-                console.error('Error deleting item:', e);
-            }
-        }
-        
-        // Open modal
-        createBtn.addEventListener('click', () => {
+const modal = document.getElementById('create-quiz-modal');
+const createBtn = document.getElementById('create-quiz-btn');
+const closeBtn = document.getElementById('modal-close');
+const modalBody = document.getElementById('modal-body');
+const modalTitle = document.getElementById('modal-title');
+const initialOptions = document.getElementById('initial-options');
+const flashcardCreationView = document.getElementById('flashcard-creation-view');
+const practiceTestView = document.getElementById('practice-test-view');
+const backButtons = document.querySelectorAll('.back-button');
+const optionCards = document.querySelectorAll('.option-card');
+const addCardButton = document.getElementById('add-card-button');
+const flashcardCardsContainer = document.getElementById('flashcard-cards-container');
+const saveFlashcardsBtn = document.getElementById('save-flashcards');
+const cancelFlashcardsBtn = document.getElementById('cancel-flashcards');
+const createTestBtn = document.getElementById('create-test');
+const cancelTestBtn = document.getElementById('cancel-test');
+const addQuestionButton = document.getElementById('add-question-button');
+const questionsContainer = document.getElementById('questions-container');
+const quizSetsContainer = document.getElementById('quiz-sets-container');
+const flashcardSetsContainer = document.getElementById('flashcard-sets-container');
+const emptyState = document.getElementById('empty-state');
+const emptyStateCreateBtn = document.getElementById('empty-state-create-btn');
+
+// Quiz Player Elements
+const quizPlayerModal = document.getElementById('quiz-player-modal');
+const quizPlayerClose = document.getElementById('quiz-player-close');
+const quizPlayerTitle = document.getElementById('quiz-player-title');
+const quizPlayerBody = document.getElementById('quiz-player-body');
+const quizTimerDisplay = document.getElementById('quiz-timer-display');
+const quizProgressFill = document.getElementById('quiz-progress-fill');
+const quizProgressText = document.getElementById('quiz-progress-text');
+const quizNextBtn = document.getElementById('quiz-next-btn');
+
+// Flashcard Player Elements
+const flashcardPlayerModal = document.getElementById('flashcard-player-modal');
+const flashcardPlayerClose = document.getElementById('flashcard-player-close');
+const flashcardPlayerTitle = document.getElementById('flashcard-player-title');
+const flashcardPlayerBody = document.getElementById('flashcard-player-body');
+const flashcardPrevBtn = document.getElementById('flashcard-prev-btn');
+const flashcardFlipBtn = document.getElementById('flashcard-flip-btn');
+const flashcardNextBtn = document.getElementById('flashcard-next-btn');
+const flashcardCounter = document.getElementById('flashcard-counter');
+const flashcardProgressFill = document.getElementById('flashcard-progress-fill');
+const masteryToggleCheckbox = document.getElementById('mastery-toggle-checkbox');
+const masteryButtons = document.getElementById('mastery-buttons');
+const masteryCrossBtn = document.getElementById('mastery-cross-btn');
+const masteryCheckBtn = document.getElementById('mastery-check-btn');
+
+let cardCounter = 2; // Start at 2 since we already have 2 cards
+let questionCounter = 1; // Start at 1 since we already have 1 question
+
+// Quiz Player Variables
+let currentQuiz = null;
+let currentQuizIndex = 0;
+let quizUserAnswers = [];
+let quizScores = {}; // Track quiz scores
+let quizTimeLimit = 0; // Time limit in minutes
+
+// Add this with other variable declarations
+let quizTimer;
+let quizStartTime;
+
+// Flashcard Player Variables
+let currentFlashcardSet = null;
+let currentFlashcardIndex = 0;
+let isFlashcardFlipped = false;
+let flashcardMasteryData = {}; // Track mastery data for flashcards
+
+// Initialize the dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    loadQuizSets();
+    
+    // Empty state create button
+    if (emptyStateCreateBtn) {
+        emptyStateCreateBtn.addEventListener('click', function() {
             modal.classList.add('active');
-            // Reset to initial view
             showView(initialOptions);
             modalTitle.textContent = 'Create New';
         });
+    }
+    
+    // Mastery toggle
+    masteryToggleCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            masteryButtons.style.display = 'flex';
+            document.querySelector('.flashcard-controls').style.display = 'none';
+        } else {
+            masteryButtons.style.display = 'none';
+            document.querySelector('.flashcard-controls').style.display = 'flex';
+        }
         
-        // Close modal
-        closeBtn.addEventListener('click', () => {
-            modal.classList.remove('active');
-            resetViews();
-        });
+        // Save the mastery tracking preference for this set
+        if (currentFlashcardSet) {
+            const setId = currentFlashcardSet.created_at;
+            if (!flashcardMasteryData[setId]) {
+                flashcardMasteryData[setId] = {};
+            }
+            flashcardMasteryData[setId].trackingEnabled = this.checked;
+            localStorage.setItem('flashcardMasteryData', JSON.stringify(flashcardMasteryData));
+        }
+    });
+    
+    // Mastery buttons
+    masteryCrossBtn.addEventListener('click', function() {
+        markCardMastery(false);
+        moveToNextCard();
+    });
+    
+    masteryCheckBtn.addEventListener('click', function() {
+        markCardMastery(true);
+        moveToNextCard();
+    });
+});
+
+// Load quiz sets from localStorage
+function loadQuizSets() {
+    let flashcardSets = [];
+    let practiceTests = [];
+    
+    try {
+        const savedFlashcardSets = localStorage.getItem('flashcardSets');
+        if (savedFlashcardSets) {
+            flashcardSets = JSON.parse(savedFlashcardSets);
+        }
         
-        // Close modal when clicking outside
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('active');
-                resetViews();
+        const savedPracticeTests = localStorage.getItem('practiceTests');
+        if (savedPracticeTests) {
+            practiceTests = JSON.parse(savedPracticeTests);
+        }
+        
+        // Load quiz scores
+        const savedScores = localStorage.getItem('quizScores');
+        if (savedScores) {
+            quizScores = JSON.parse(savedScores);
+        }
+        
+        // Load flashcard mastery data
+        const savedMasteryData = localStorage.getItem('flashcardMasteryData');
+        if (savedMasteryData) {
+            flashcardMasteryData = JSON.parse(savedMasteryData);
+        }
+    } catch (e) {
+        console.error('Error loading quiz sets:', e);
+    }
+    
+    // Check if we have any user-created content
+    const hasUserContent = flashcardSets.length > 0 || practiceTests.length > 0;
+    
+    // Show/hide empty state
+    emptyState.style.display = hasUserContent ? 'none' : 'block';
+    
+    // Clear existing user-created cards
+    const existingFlashcardCards = flashcardSetsContainer.querySelectorAll('.user-created-card');
+    existingFlashcardCards.forEach(card => card.remove());
+    
+    const existingQuizCards = quizSetsContainer.querySelectorAll('.user-created-card');
+    existingQuizCards.forEach(card => card.remove());
+    
+    // Add flashcard sets to the dashboard
+    flashcardSets.forEach(set => {
+        addCardToGrid(set, 'flashcard');
+    });
+    
+    // Add practice tests to the dashboard
+    practiceTests.forEach(test => {
+        addCardToGrid(test, 'practice-test');
+    });
+}
+
+// Add a card to the grid
+function addCardToGrid(item, type) {
+    const card = document.createElement('div');
+    card.className = 'card user-created-card';
+    card.setAttribute('data-id', item.created_at);
+    
+    // Get the mastered percentage
+    let masteredPercentage = "0%";
+    if (type === 'practice-test') {
+        // For practice tests, show the actual score if they've taken the test
+        if (quizScores[item.created_at] !== undefined) {
+            // Cap quiz scores at 100%
+            const score = Math.min(quizScores[item.created_at], 100);
+            masteredPercentage = score + "%";
+        } else {
+            // If they haven't taken the test yet, show 0%
+            masteredPercentage = "0%";
+        }
+    } else if (type === 'flashcard' && flashcardMasteryData[item.created_at]) {
+        const masteryData = flashcardMasteryData[item.created_at];
+        const totalCards = item.cards.length;
+        
+        // Count only actual mastery data (exclude trackingEnabled property)
+        // Only count cards that have been marked as mastered (true)
+        const masteredCards = Object.entries(masteryData)
+            .filter(([key, value]) => key !== 'trackingEnabled' && value === true)
+            .length;
+        
+        // Calculate percentage based on cards that have been mastered
+        // Cap at 100%
+        const percentage = Math.min(Math.round((masteredCards / totalCards) * 100), 100);
+        masteredPercentage = percentage + "%";
+    }
+    
+    const cardContent = `
+        <div class="card-header ${type === 'flashcard' ? 'flashcard' : ''}">
+            <h3 class="card-title">${item.title}</h3>
+            <div class="card-subtitle">${item.description || (type === 'flashcard' ? 'Flashcard Set' : 'Practice Test')}</div>
+            <div class="card-menu">
+                <button class="card-menu-btn" aria-label="Card menu">
+                    <i class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-more-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                    </i>
+                </button>
+                <div class="card-menu-dropdown">
+                    <div class="card-menu-item edit-item">
+                        <i class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                        </i> Edit
+                    </div>
+                    <div class="card-menu-item delete-item">
+                        <i class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                        </i> Delete
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="card-stats">
+                <div class="stat">
+                    <div class="stat-value">${type === 'flashcard' ? item.cards.length : item.questions.length}</div>
+                    <div class="stat-label">${type === 'flashcard' ? 'Cards' : 'Questions'}</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">${masteredPercentage}</div>
+                    <div class="stat-label">Mastered</div>
+                </div>
+            </div>
+            <div class="card-actions">
+                ${type === 'flashcard' ? 
+                '<button class="card-btn flashcard" data-id="' + item.created_at + '" data-type="' + type + '">Study</button>' : 
+                '<button class="card-btn primary" data-id="' + item.created_at + '" data-type="' + type + '">Quiz</button>'}
+            </div>
+        </div>
+    `;
+    
+    card.innerHTML = cardContent;
+    
+    // Add the card to the appropriate container
+    if (type === 'flashcard') {
+        flashcardSetsContainer.appendChild(card);
+    } else {
+        quizSetsContainer.appendChild(card);
+    }
+    
+    // Add event listeners to the buttons
+    if (type === 'flashcard') {
+        const studyBtn = card.querySelector('.card-btn.flashcard');
+        if (studyBtn) {
+            studyBtn.addEventListener('click', function() {
+                // Find the flashcard set in localStorage
+                let flashcardSets = [];
+                const savedFlashcardSets = localStorage.getItem('flashcardSets');
+                if (savedFlashcardSets) {
+                    flashcardSets = JSON.parse(savedFlashcardSets);
+                    const setToStudy = flashcardSets.find(set => set.created_at === parseInt(item.created_at));
+                    if (setToStudy) {
+                        openFlashcardPlayer(setToStudy, 'study');
+                    } else {
+                        console.error('Could not find flashcard set with ID:', item.created_at);
+                    }
+                } else {
+                    console.error('No flashcard sets found in localStorage');
+                }
+            });
+        }
+    } else {
+        const quizBtn = card.querySelector('.card-btn.primary');
+        if (quizBtn) {
+            quizBtn.addEventListener('click', function() {
+                console.log('Quiz button clicked for ID:', this.getAttribute('data-id'));
+                try {
+                    const savedPracticeTests = localStorage.getItem('practiceTests');
+                    if (!savedPracticeTests) {
+                        alert('No practice tests found in localStorage');
+                        return;
+                    }
+                    
+                    const practiceTests = JSON.parse(savedPracticeTests);
+                    const cardId = parseInt(this.getAttribute('data-id'));
+                    console.log('Looking for test with ID:', cardId);
+                    console.log('Available tests:', practiceTests);
+                    
+                    const testToTake = practiceTests.find(test => parseInt(test.created_at) === cardId);
+                    if (testToTake) {
+                        openQuizPlayer(testToTake, 'quiz');
+                    } else {
+                        alert('Could not find practice test with ID: ' + cardId);
+                    }
+                } catch (error) {
+                    console.error('Error loading quiz:', error);
+                    alert('An error occurred while loading the quiz. Please try again.');
+                }
+            });
+        }
+    }
+        
+    // Add event listeners for card menu
+    const menuBtn = card.querySelector('.card-menu-btn');
+    const menuDropdown = card.querySelector('.card-menu-dropdown');
+    
+    menuBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        menuDropdown.classList.toggle('active');
+        
+        // Close other open menus
+        document.querySelectorAll('.card-menu-dropdown.active').forEach(dropdown => {
+            if (dropdown !== menuDropdown) {
+                dropdown.classList.remove('active');
             }
         });
+    });
+    
+    // Edit button
+    const editBtn = card.querySelector('.edit-item');
+    editBtn.addEventListener('click', function() {
+        // Implement edit functionality
+        menuDropdown.classList.remove('active');
         
-        // Show a specific view and hide others
-        function showView(viewToShow) {
-            // Hide all views
-            initialOptions.style.display = 'none';
-            flashcardCreationView.style.display = 'none';
-            practiceTestView.style.display = 'none';
-            
-            // Show the requested view
-            if (viewToShow) {
-                viewToShow.style.display = 'block';
+        if (type === 'flashcard') {
+            // Find the flashcard set in localStorage
+            let flashcardSets = [];
+            const savedFlashcardSets = localStorage.getItem('flashcardSets');
+            if (savedFlashcardSets) {
+                flashcardSets = JSON.parse(savedFlashcardSets);
+                const setToEdit = flashcardSets.find(set => set.created_at === parseInt(item.created_at));
                 
-                // Add or remove flashcard-mode class based on the view
-                const modalElement = document.querySelector('.modal');
-                if (viewToShow === flashcardCreationView) {
-                    modalElement.classList.add('flashcard-mode');
-                } else {
-                    modalElement.classList.remove('flashcard-mode');
+                if (setToEdit) {
+                    // Open modal in edit mode
+                    modal.classList.add('active');
+                    showView(flashcardCreationView);
+                    modalTitle.textContent = 'Edit Flashcard Set';
+                    
+                    // Populate form fields
+                    document.getElementById('flashcard-set-title').value = setToEdit.title;
+                    document.getElementById('flashcard-set-description').value = setToEdit.description || '';
+                    
+                    // Clear existing cards
+                    flashcardCardsContainer.innerHTML = '';
+                    
+                    // Add cards from the set
+                    setToEdit.cards.forEach(card => {
+                        const newCard = document.createElement('div');
+                        newCard.className = 'flashcard-card';
+                        newCard.setAttribute('data-card-id', card.id);
+                        
+                        newCard.innerHTML = `
+                            <div class="flashcard-card-header">
+                                <div class="flashcard-card-number">${card.id}</div>
+                                <div class="flashcard-card-actions">
+                                    <button class="btn btn-sm btn-outline move-card-up" title="Move up">
+                                        <i class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg>
+                                        </i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline move-card-down" title="Move down">
+                                        <i class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                                        </i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline delete-card" title="Delete card">
+                                        <i class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                        </i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flashcard-card-content">
+                                <div class="flashcard-field">
+                                    <div class="flashcard-field-label">Term</div>
+                                    <input type="text" class="form-input flashcard-term" placeholder="Enter term" value="${card.term}">
+                                </div>
+                                <div class="flashcard-field">
+                                    <div class="flashcard-field-label">Definition</div>
+                                    <input type="text" class="form-input flashcard-definition" placeholder="Enter definition" value="${card.definition}">
+                                </div>
+                            </div>
+                        `;
+                        
+                        flashcardCardsContainer.appendChild(newCard);
+                        setupCardEventListeners(newCard);
+                    });
+                    
+                    // Update cardCounter
+                    cardCounter = setToEdit.cards.length;
+                    
+                    // Change save button to update
+                    saveFlashcardsBtn.textContent = 'Update';
+                    saveFlashcardsBtn.setAttribute('data-edit-id', String(item.created_at));
+                }
+            }
+        } else if (type === 'practice-test') {
+            // Find the practice test in localStorage
+            let practiceTests = [];
+            const savedPracticeTests = localStorage.getItem('practiceTests');
+            if (savedPracticeTests) {
+                practiceTests = JSON.parse(savedPracticeTests);
+                const testToEdit = practiceTests.find(test => test.created_at === parseInt(item.created_at));
+                
+                if (testToEdit) {
+                    // Open modal in edit mode
+                    modal.classList.add('active');
+                    showView(practiceTestView);
+                    modalTitle.textContent = 'Edit Practice Test';
+                    
+                    // Populate form fields
+                    document.getElementById('test-title').value = testToEdit.title;
+                    document.getElementById('test-description').value = testToEdit.description || '';
+                    document.getElementById('test-timer-minutes').value = testToEdit.timeLimit || 30;
+                    
+                    // Clear existing questions
+                    questionsContainer.innerHTML = '';
+                    
+                    // Add questions from the test
+                    testToEdit.questions.forEach(question => {
+                        const newQuestion = document.createElement('div');
+                        newQuestion.className = 'question-card';
+                        newQuestion.setAttribute('data-question-id', question.id);
+                        
+                        // Create question HTML based on type
+                        let questionHTML = `
+                            <div class="question-card-header">
+                                <div class="question-card-number">Question ${question.id}</div>
+                                <div class="question-card-actions">
+                                    <button class="btn btn-sm btn-outline delete-question" title="Delete question">
+                                        <i class="icon">🗑️</i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="question-${question.id}-text">Question</label>
+                                <input type="text" id="question-${question.id}-text" class="form-input question-text" placeholder="Enter your question" value="${question.text}">
+                            </div>
+                            
+                            <div class="question-type-selector">
+                                <label class="question-type-label">Question Type</label>
+                                <div class="question-type-options">
+                                    <div class="question-type-option ${question.type === 'multiple-choice' ? 'active' : ''}" data-type="multiple-choice">Multiple Choice</div>
+                                    <div class="question-type-option ${question.type === 'true-false' ? 'active' : ''}" data-type="true-false">True/False</div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Add type-specific content
+                        if (question.type === 'multiple-choice') {
+                            questionHTML += `
+                                <div class="question-type-content multiple-choice-content">
+                                    <div class="multiple-choice-options">
+                            `;
+                            
+                            question.options.forEach(option => {
+                                questionHTML += `
+                                    <div class="multiple-choice-option">
+                                        <div class="option-letter">${option.letter}</div>
+                                        <input type="text" class="form-input option-input" placeholder="Enter option ${option.letter}" value="${option.text}">
+                                    </div>
+                                `;
+                            });
+                            
+                            questionHTML += `
+                                    </div>
+                                    
+                                    <button class="add-option-btn">
+                                        <i class="icon">+</i> Add Option
+                                    </button>
+                                    
+                                    <div class="correct-option">
+                                        <label class="correct-option-label" for="question-${question.id}-correct">Correct Answer:</label>
+                                        <select id="question-${question.id}-correct" class="form-input">
+                            `;
+                            
+                            question.options.forEach(option => {
+                                questionHTML += `<option value="${option.letter}" ${option.letter === question.correctAnswer ? 'selected' : ''}>${option.letter}</option>`;
+                            });
+                            
+                            questionHTML += `
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="question-type-content true-false-content" style="display: none;">
+                                    <div class="true-false-options">
+                                        <div class="true-false-option" data-value="true">True</div>
+                                        <div class="true-false-option" data-value="false">False</div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (question.type === 'true-false') {
+                            questionHTML += `
+                                <div class="question-type-content multiple-choice-content" style="display: none;">
+                                    <div class="multiple-choice-options">
+                                        <div class="multiple-choice-option">
+                                            <div class="option-letter">A</div>
+                                            <input type="text" class="form-input option-input" placeholder="Enter option A">
+                                        </div>
+                                        <div class="multiple-choice-option">
+                                            <div class="option-letter">B</div>
+                                            <input type="text" class="form-input option-input" placeholder="Enter option B">
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="add-option-btn">
+                                        <i class="icon">+</i> Add Option
+                                    </button>
+                                    
+                                    <div class="correct-option">
+                                        <label class="correct-option-label" for="question-${question.id}-correct">Correct Answer:</label>
+                                        <select id="question-${question.id}-correct" class="form-input">
+                                            <option value="A">A</option>
+                                            <option value="B">B</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="question-type-content true-false-content">
+                                    <div class="true-false-options">
+                                        <div class="true-false-option ${question.correctAnswer === 'A' ? 'selected' : ''}" data-value="true">True</div>
+                                        <div class="true-false-option ${question.correctAnswer === 'B' ? 'selected' : ''}" data-value="false">False</div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
+                        newQuestion.innerHTML = questionHTML;
+                        questionsContainer.appendChild(newQuestion);
+                        setupQuestionEventListeners(newQuestion);
+                    });
+                    
+                    // Update questionCounter
+                    questionCounter = testToEdit.questions.length;
+                    
+                    // Change save button to update
+                    createTestBtn.textContent = 'Update';
+                    createTestBtn.setAttribute('data-edit-id', String(item.created_at));
                 }
             }
         }
+    });
+    
+    // Delete button
+    const deleteBtn = card.querySelector('.delete-item');
+    deleteBtn.addEventListener('click', function() {
+        if (confirm('Are you sure you want to delete this item?')) {
+            deleteItem(item.created_at, type);
+        }
+        menuDropdown.classList.remove('active');
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!card.contains(e.target)) {
+            menuDropdown.classList.remove('active');
+        }
+    });
+}
+
+// Delete an item
+function deleteItem(id, type) {
+    try {
+        if (type === 'flashcard') {
+            let flashcardSets = [];
+            const savedFlashcardSets = localStorage.getItem('flashcardSets');
+            if (savedFlashcardSets) {
+                flashcardSets = JSON.parse(savedFlashcardSets);
+                const updatedSets = flashcardSets.filter(set => set.created_at !== id);
+                localStorage.setItem('flashcardSets', JSON.stringify(updatedSets));
+            }
+            
+            // Remove mastery data
+            if (flashcardMasteryData[id]) {
+                delete flashcardMasteryData[id];
+                localStorage.setItem('flashcardMasteryData', JSON.stringify(flashcardMasteryData));
+            }
+        } else {
+            let practiceTests = [];
+            const savedPracticeTests = localStorage.getItem('practiceTests');
+            if (savedPracticeTests) {
+                practiceTests = JSON.parse(savedPracticeTests);
+                const updatedTests = practiceTests.filter(test => test.created_at !== id);
+                localStorage.setItem('practiceTests', JSON.stringify(updatedTests));
+            }
+            
+            // Remove score data
+            if (quizScores[id]) {
+                delete quizScores[id];
+                localStorage.setItem('quizScores', JSON.stringify(quizScores));
+            }
+        }
         
-        // Reset views
-        function resetViews() {
-            // Reset form fields
+        // Refresh the dashboard
+        loadQuizSets();
+    } catch (e) {
+        console.error('Error deleting item:', e);
+    }
+}
+
+// Open modal
+createBtn.addEventListener('click', () => {
+    modal.classList.add('active');
+    // Reset to initial view
+    showView(initialOptions);
+    modalTitle.textContent = 'Create New';
+});
+
+// Close modal
+closeBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+});
+
+// Cancel buttons
+cancelFlashcardsBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+});
+
+cancelTestBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+});
+
+// Back buttons
+backButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const target = button.getAttribute('data-target');
+        showView(document.getElementById(target));
+        modalTitle.textContent = 'Create New';
+    });
+});
+
+// Option cards
+optionCards.forEach(card => {
+    card.addEventListener('click', () => {
+        const option = card.getAttribute('data-option');
+        
+        if (option === 'flashcards') {
+            showView(flashcardCreationView);
+            modalTitle.textContent = 'Create Flashcard Set';
+            
+            // Reset form
             document.getElementById('flashcard-set-title').value = '';
             document.getElementById('flashcard-set-description').value = '';
             
-            // Reset flashcard cards to initial state (2 empty cards)
-            flashcardCardsContainer.innerHTML = '';
-            cardCounter = 0;
+            // Reset card counter
+            cardCounter = 2;
             
-            // Add two initial cards
-            addNewCard();
-            addNewCard();
+            // Reset save button
+            saveFlashcardsBtn.textContent = 'Create';
+            saveFlashcardsBtn.removeAttribute('data-edit-id');
             
-            // Reset practice test form
+            // Reset cards
+            const cards = flashcardCardsContainer.querySelectorAll('.flashcard-card');
+            cards.forEach((card, index) => {
+                const termInput = card.querySelector('.flashcard-term');
+                const definitionInput = card.querySelector('.flashcard-definition');
+                
+                termInput.value = '';
+                definitionInput.value = '';
+            });
+        } else if (option === 'practice-test') {
+            showView(practiceTestView);
+            modalTitle.textContent = 'Create Practice Test';
+            
+            // Reset form
             document.getElementById('test-title').value = '';
             document.getElementById('test-description').value = '';
             document.getElementById('test-timer-minutes').value = '30';
             
-            // Reset questions to initial state (1 empty question)
-            questionsContainer.innerHTML = '';
-            questionCounter = 0;
+            // Reset question counter
+            questionCounter = 1;
             
-            // Add one initial question
-            addNewQuestion();
-        }
-        
-        // Handle option card clicks
-        optionCards.forEach(card => {
-            card.addEventListener('click', () => {
-                const option = card.getAttribute('data-option');
-                
-                if (option === 'flashcards') {
-                    showView(flashcardCreationView);
-                    modalTitle.textContent = 'Create a new flashcard set';
-                } else if (option === 'practice-test') {
-                    showView(practiceTestView);
-                    modalTitle.textContent = 'Create a practice test';
-                }
-            });
-        });
-        
-        // Handle back buttons
-        backButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const target = button.getAttribute('data-target');
-                if (target === 'initial-options') {
-                    showView(initialOptions);
-                    modalTitle.textContent = 'Create New';
-                }
-            });
-        });
-        
-        // Add new flashcard card
-        addCardButton.addEventListener('click', addNewCard);
-        
-        // Function to add a new flashcard
-        function addNewCard() {
-            cardCounter++;
+            // Reset create button
+            createTestBtn.textContent = 'Create';
+            createTestBtn.removeAttribute('data-edit-id');
             
-            const newCard = document.createElement('div');
-            newCard.className = 'flashcard-card';
-            newCard.setAttribute('data-card-id', cardCounter);
-            
-            newCard.innerHTML = `
-                <div class="flashcard-card-header">
-                    <div class="flashcard-card-number">${cardCounter}</div>
-                    <div class="flashcard-card-actions">
-                        <button class="btn btn-sm btn-outline move-card-up" title="Move up">
-                            <i class="icon">↑</i>
-                        </button>
-                        <button class="btn btn-sm btn-outline move-card-down" title="Move down">
-                            <i class="icon">↓</i>
-                        </button>
-                        <button class="btn btn-sm btn-outline delete-card" title="Delete card">
-                            <i class="icon">🗑️</i>
-                        </button>
-                    </div>
-                </div>
-                <div class="flashcard-card-content">
-                    <div class="flashcard-field">
-                        <div class="flashcard-field-label">Term</div>
-                        <input type="text" class="form-input flashcard-term" placeholder="Enter term">
-                    </div>
-                    <div class="flashcard-field">
-                        <div class="flashcard-field-label">Definition</div>
-                        <input type="text" class="form-input flashcard-definition" placeholder="Enter definition">
-                    </div>
-                </div>
-            `;
-            
-            flashcardCardsContainer.appendChild(newCard);
-            
-            // Add event listeners to the new card
-            setupCardEventListeners(newCard);
-        }
-        
-        // Setup event listeners for flashcard cards
-        function setupCardEventListeners(card) {
-            // Delete card
-            const deleteBtn = card.querySelector('.delete-card');
-            if (deleteBtn) {
-                deleteBtn.addEventListener('click', function() {
-                    if (document.querySelectorAll('.flashcard-card').length > 1) {
-                        card.remove();
-                        renumberCards();
-                    } else {
-                        alert('You must have at least one card in your flashcard set.');
-                    }
-                });
-            }
-            
-            // Move card up
-            const upBtn = card.querySelector('.move-card-up');
-            if (upBtn) {
-                upBtn.addEventListener('click', function() {
-                    const prev = card.previousElementSibling;
-                    if (prev && prev.classList.contains('flashcard-card')) {
-                        flashcardCardsContainer.insertBefore(card, prev);
-                        renumberCards();
-                    }
-                });
-            }
-            
-            // Move card down
-            const downBtn = card.querySelector('.move-card-down');
-            if (downBtn) {
-                downBtn.addEventListener('click', function() {
-                    const next = card.nextElementSibling;
-                    if (next && next.classList.contains('flashcard-card')) {
-                        flashcardCardsContainer.insertBefore(next, card);
-                        renumberCards();
-                    }
-                });
-            }
-        }
-        
-        // Renumber cards
-        function renumberCards() {
-            const cards = document.querySelectorAll('.flashcard-card');
-            cards.forEach((card, index) => {
-                const number = index + 1;
-                card.querySelector('.flashcard-card-number').textContent = number;
-                card.setAttribute('data-card-id', number);
-            });
-        }
-        
-        // Save flashcards
-        saveFlashcardsBtn.addEventListener('click', saveFlashcards);
-        
-        function saveFlashcards() {
-            const title = document.getElementById('flashcard-set-title').value;
-            if (!title) {
-                alert('Please enter a title for your flashcard set.');
-                return;
-            }
-            
-            const cards = document.querySelectorAll('.flashcard-card');
-            const flashcardData = [];
-            
-            let isValid = true;
-            
-            cards.forEach((card, index) => {
-                const term = card.querySelector('.flashcard-term').value;
-                const definition = card.querySelector('.flashcard-definition').value;
-                
-                if (!term || !definition) {
-                    isValid = false;
-                }
-                
-                flashcardData.push({
-                    id: index + 1,
-                    term: term,
-                    definition: definition
-                });
-            });
-            
-            if (!isValid) {
-                alert('Please fill in all terms and definitions.');
-                return;
-            }
-            
-            // Create flashcard set object
-            const flashcardSet = {
-                title: title,
-                description: document.getElementById('flashcard-set-description').value,
-                cards: flashcardData,
-                created_at: new Date().toISOString()
-            };
-            
-            // Save to localStorage for demo purposes
-            let savedSets = [];
-            try {
-                const existingSets = localStorage.getItem('flashcardSets');
-                if (existingSets) {
-                    savedSets = JSON.parse(existingSets);
-                }
-            } catch (e) {
-                console.error('Error parsing saved flashcard sets:', e);
-            }
-            
-            savedSets.push(flashcardSet);
-            localStorage.setItem('flashcardSets', JSON.stringify(savedSets));
-            
-            // Show success message
-            alert('Flashcard set created successfully! It will now appear in your library and dashboard.');
-            modal.classList.remove('active');
-            resetViews();
-            
-            // Refresh the dashboard
-            loadQuizSets();
-        }
-        
-        // Cancel flashcards
-        cancelFlashcardsBtn.addEventListener('click', () => {
-            modal.classList.remove('active');
-            resetViews();
-        });
-        
-        // Add new question
-        addQuestionButton.addEventListener('click', addNewQuestion);
-        
-        // Function to add a new question
-        function addNewQuestion() {
-            questionCounter++;
-            
-            const newQuestion = document.createElement('div');
-            newQuestion.className = 'question-card';
-            newQuestion.setAttribute('data-question-id', questionCounter);
-            
-            newQuestion.innerHTML = `
-                <div class="question-card-header">
-                    <div class="question-card-number">Question ${questionCounter}</div>
-                    <div class="question-card-actions">
-                        <button class="btn btn-sm btn-outline delete-question" title="Delete question">
-                            <i class="icon">🗑️</i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="question-${questionCounter}-text">Question</label>
-                    <input type="text" id="question-${questionCounter}-text" class="form-input question-text" placeholder="Enter your question">
-                </div>
-                
-                <div class="question-type-selector">
-                    <label class="question-type-label">Question Type</label>
-                    <div class="question-type-options">
-                        <div class="question-type-option active" data-type="multiple-choice">Multiple Choice</div>
-                        <div class="question-type-option" data-type="true-false">True/False</div>
-                    </div>
-                </div>
-                
-                <div class="question-type-content multiple-choice-content">
-                    <div class="multiple-choice-options">
-                        <div class="multiple-choice-option">
-                            <div class="option-letter">A</div>
-                            <input type="text" class="form-input option-input" placeholder="Enter option A">
-                        </div>
-                        <div class="multiple-choice-option">
-                            <div class="option-letter">B</div>
-                            <input type="text" class="form-input option-input" placeholder="Enter option B">
-                        </div>
-                        <div class="multiple-choice-option">
-                            <div class="option-letter">C</div>
-                            <input type="text" class="form-input option-input" placeholder="Enter option C">
-                        </div>
-                        <div class="multiple-choice-option">
-                            <div class="option-letter">D</div>
-                            <input type="text" class="form-input option-input" placeholder="Enter option D">
-                        </div>
-                    </div>
-                    
-                    <button class="add-option-btn">
-                        <i class="icon">+</i> Add Option
-                    </button>
-                    
-                    <div class="correct-option">
-                        <label class="correct-option-label" for="question-${questionCounter}-correct">Correct Answer:</label>
-                        <select id="question-${questionCounter}-correct" class="form-input">
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
-                            <option value="D">D</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="question-type-content true-false-content" style="display: none;">
-                    <div class="true-false-options">
-                        <div class="true-false-option selected" data-value="true">True</div>
-                        <div class="true-false-option" data-value="false">False</div>
-                    </div>
-                </div>
-            `;
-            
-            questionsContainer.appendChild(newQuestion);
-            
-            // Add event listeners to the new question
-            setupQuestionEventListeners(newQuestion);
-        }
-        
-        // Setup event listeners for questions
-        function setupQuestionEventListeners(question) {
-            // Delete question
-            const deleteBtn = question.querySelector('.delete-question');
-            if (deleteBtn) {
-                deleteBtn.addEventListener('click', function() {
-                    if (document.querySelectorAll('.question-card').length > 1) {
-                        question.remove();
-                        renumberQuestions();
-                    } else {
-                        alert('You must have at least one question in your test.');
-                    }
-                });
-            }
-            
-            // Question type selector
-            const typeOptions = question.querySelectorAll('.question-type-option');
-            typeOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    // Remove active class from all options
-                    typeOptions.forEach(opt => opt.classList.remove('active'));
-                    
-                    // Add active class to clicked option
-                    this.classList.add('active');
-                    
-                    // Show/hide content based on selected type
-                    const type = this.getAttribute('data-type');
-                    const multipleChoiceContent = question.querySelector('.multiple-choice-content');
-                    const trueFalseContent = question.querySelector('.true-false-content');
-                    
-                    if (type === 'multiple-choice') {
-                        multipleChoiceContent.style.display = 'block';
-                        trueFalseContent.style.display = 'none';
-                    } else if (type === 'true-false') {
-                        multipleChoiceContent.style.display = 'none';
-                        trueFalseContent.style.display = 'block';
-                    }
-                });
-            });
-            
-            // True/False options
-            const tfOptions = question.querySelectorAll('.true-false-option');
-            tfOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    // Remove selected class from all options
-                    tfOptions.forEach(opt => opt.classList.remove('selected'));
-                    
-                    // Add selected class to clicked option
-                    this.classList.add('selected');
-                });
-            });
-            
-            // Add option button
-            const addOptionBtn = question.querySelector('.add-option-btn');
-            if (addOptionBtn) {
-                addOptionBtn.addEventListener('click', function() {
-                    const optionsContainer = question.querySelector('.multiple-choice-options');
-                    const optionCount = optionsContainer.querySelectorAll('.multiple-choice-option').length;
-                    
-                    if (optionCount < 6) { // Limit to 6 options (A-F)
-                        const optionLetter = String.fromCharCode(65 + optionCount); // A=65, B=66, etc.
-                        
-                        const newOption = document.createElement('div');
-                        newOption.className = 'multiple-choice-option';
-                        newOption.innerHTML = `
-                            <div class="option-letter">${optionLetter}</div>
-                            <input type="text" class="form-input option-input" placeholder="Enter option ${optionLetter}">
-                        `;
-                        
-                        optionsContainer.appendChild(newOption);
-                        
-                        // Update correct answer dropdown
-                        const correctSelect = question.querySelector('select');
-                        const newOptionEl = document.createElement('option');
-                        newOptionEl.value = optionLetter;
-                        newOptionEl.textContent = optionLetter;
-                        correctSelect.appendChild(newOptionEl);
-                    } else {
-                        alert('Maximum of 6 options allowed.');
-                    }
-                });
-            }
-        }
-        
-        // Renumber questions
-        function renumberQuestions() {
-            const questions = document.querySelectorAll('.question-card');
+            // Reset questions
+            const questions = questionsContainer.querySelectorAll('.question-card');
             questions.forEach((question, index) => {
-                const number = index + 1;
-                question.querySelector('.question-card-number').textContent = `Question ${number}`;
-                question.setAttribute('data-question-id', number);
-            });
-        }
-        
-        // Create test
-        createTestBtn.addEventListener('click', () => {
-            const title = document.getElementById('test-title').value;
-            if (!title) {
-                alert('Please enter a title for your practice test.');
-                return;
-            }
-            
-            // Get time limit
-            const timeLimit = parseInt(document.getElementById('test-timer-minutes').value) || 30;
-            
-            const questions = document.querySelectorAll('.question-card');
-            const questionData = [];
-            
-            let isValid = true;
-            
-            questions.forEach((question, index) => {
-                const questionText = question.querySelector('.question-text').value;
-                if (!questionText) {
-                    isValid = false;
-                }
+                const questionInput = question.querySelector('.question-text');
+                const optionInputs = question.querySelectorAll('.option-input');
                 
-                const questionType = question.querySelector('.question-type-option.active').getAttribute('data-type');
-                let options = [];
-                let correctAnswer = '';
-                
-                if (questionType === 'multiple-choice') {
-                    const optionInputs = question.querySelectorAll('.option-input');
-                    optionInputs.forEach((input, i) => {
-                        if (!input.value) {
-                            isValid = false;
-                        }
-                        options.push({
-                            letter: String.fromCharCode(65 + i),
-                            text: input.value
-                        });
-                    });
-                    
-                    correctAnswer = question.querySelector('select').value;
-                } else if (questionType === 'true-false') {
-                    options = [
-                        { letter: 'A', text: 'True' },
-                        { letter: 'B', text: 'False' }
-                    ];
-                    
-                    const selectedOption = question.querySelector('.true-false-option.selected');
-                    correctAnswer = selectedOption.getAttribute('data-value') === 'true' ? 'A' : 'B';
-                }
-                
-                questionData.push({
-                    id: index + 1,
-                    text: questionText,
-                    type: questionType,
-                    options: options,
-                    correctAnswer: correctAnswer
+                questionInput.value = '';
+                optionInputs.forEach(input => {
+                    input.value = '';
                 });
             });
+        }
+    });
+});
+
+// Show a specific view
+function showView(view) {
+    // Hide all views
+    initialOptions.style.display = 'none';
+    flashcardCreationView.style.display = 'none';
+    practiceTestView.style.display = 'none';
+    
+    // Show the requested view
+    view.style.display = 'block';
+}
+
+// Add card button
+addCardButton.addEventListener('click', () => {
+    cardCounter++;
+    
+    const newCard = document.createElement('div');
+    newCard.className = 'flashcard-card';
+    newCard.setAttribute('data-card-id', cardCounter);
+    
+    newCard.innerHTML = `
+        <div class="flashcard-card-header">
+            <div class="flashcard-card-number">${cardCounter}</div>
+            <div class="flashcard-card-actions">
+                <button class="btn btn-sm btn-outline move-card-up" title="Move up">
+                    <i class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg>
+                    </i>
+                </button>
+                <button class="btn btn-sm btn-outline move-card-down" title="Move down">
+                    <i class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                    </i>
+                </button>
+                <button class="btn btn-sm btn-outline delete-card" title="Delete card">
+                    <i class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                    </i>
+                </button>
+            </div>
+        </div>
+        <div class="flashcard-card-content">
+            <div class="flashcard-field">
+                <div class="flashcard-field-label">Term</div>
+                <input type="text" class="form-input flashcard-term" placeholder="Enter term">
+            </div>
+            <div class="flashcard-field">
+                <div class="flashcard-field-label">Definition</div>
+                <input type="text" class="form-input flashcard-definition" placeholder="Enter definition">
+            </div>
+        </div>
+    `;
+    
+    flashcardCardsContainer.appendChild(newCard);
+    setupCardEventListeners(newCard);
+});
+
+// Setup card event listeners
+function setupCardEventListeners(card) {
+    const moveUpBtn = card.querySelector('.move-card-up');
+    const moveDownBtn = card.querySelector('.move-card-down');
+    const deleteBtn = card.querySelector('.delete-card');
+    
+    moveUpBtn.addEventListener('click', () => {
+        const prevCard = card.previousElementSibling;
+        if (prevCard) {
+            flashcardCardsContainer.insertBefore(card, prevCard);
+            updateCardNumbers();
+        }
+    });
+    
+    moveDownBtn.addEventListener('click', () => {
+        const nextCard = card.nextElementSibling;
+        if (nextCard) {
+            flashcardCardsContainer.insertBefore(nextCard, card);
+            updateCardNumbers();
+        }
+    });
+    
+    deleteBtn.addEventListener('click', () => {
+        if (flashcardCardsContainer.querySelectorAll('.flashcard-card').length > 1) {
+            card.remove();
+            updateCardNumbers();
+        } else {
+            alert('You must have at least one card in the set.');
+        }
+    });
+}
+
+// Update card numbers
+function updateCardNumbers() {
+    const cards = flashcardCardsContainer.querySelectorAll('.flashcard-card');
+    cards.forEach((card, index) => {
+        const cardNumber = card.querySelector('.flashcard-card-number');
+        cardNumber.textContent = index + 1;
+        card.setAttribute('data-card-id', index + 1);
+    });
+}
+
+// Save flashcards
+saveFlashcardsBtn.addEventListener('click', () => {
+    const title = document.getElementById('flashcard-set-title').value.trim();
+    const description = document.getElementById('flashcard-set-description').value.trim();
+    
+    if (!title) {
+        alert('Please enter a title for your flashcard set.');
+        return;
+    }
+    
+    const cards = [];
+    const cardElements = flashcardCardsContainer.querySelectorAll('.flashcard-card');
+    
+    let hasEmptyFields = false;
+    
+    cardElements.forEach((card, index) => {
+        const term = card.querySelector('.flashcard-term').value.trim();
+        const definition = card.querySelector('.flashcard-definition').value.trim();
+        
+        if (!term || !definition) {
+            hasEmptyFields = true;
+            return;
+        }
+        
+        cards.push({
+            id: index + 1,
+            term,
+            definition
+        });
+    });
+    
+    if (hasEmptyFields) {
+        alert('Please fill in all term and definition fields.');
+        return;
+    }
+    
+    if (cards.length === 0) {
+        alert('Please add at least one card to your flashcard set.');
+        return;
+    }
+    
+    try {
+        // Check if we're editing an existing set
+        const editId = saveFlashcardsBtn.getAttribute('data-edit-id');
+        
+        if (editId) {
+            // Update existing set
+            let flashcardSets = [];
+            const savedFlashcardSets = localStorage.getItem('flashcardSets');
             
-            if (!isValid) {
-                alert('Please fill in all questions and options.');
-                return;
+            if (savedFlashcardSets) {
+                flashcardSets = JSON.parse(savedFlashcardSets);
+                
+                // Find the set to update
+                const setIndex = flashcardSets.findIndex(set => set.created_at === parseInt(editId));
+                
+                if (setIndex !== -1) {
+                    // Update the set
+                    flashcardSets[setIndex] = {
+                        ...flashcardSets[setIndex],
+                        title,
+                        description,
+                        cards,
+                        updated_at: Date.now()
+                    };
+                    
+                    localStorage.setItem('flashcardSets', JSON.stringify(flashcardSets));
+                    
+                    alert('Flashcard set updated successfully!');
+                    modal.classList.remove('active');
+                    loadQuizSets();
+                } else {
+                    alert('Could not find the flashcard set to update.');
+                }
             }
-            
-            // Create test object
-            const test = {
-                title: title,
-                description: document.getElementById('test-description').value,
-                timeLimit: timeLimit,
-                questions: questionData,
-                created_at: new Date().toISOString()
+        } else {
+            // Create new set
+            const newSet = {
+                created_at: Date.now(),
+                title,
+                description,
+                cards
             };
             
-            // Save to localStorage for demo purposes
-            let savedTests = [];
-            try {
-                const existingTests = localStorage.getItem('practiceTests');
-                if (existingTests) {
-                    savedTests = JSON.parse(existingTests);
-                }
-            } catch (e) {
-                console.error('Error parsing saved practice tests:', e);
+            let flashcardSets = [];
+            const savedFlashcardSets = localStorage.getItem('flashcardSets');
+            
+            if (savedFlashcardSets) {
+                flashcardSets = JSON.parse(savedFlashcardSets);
             }
             
-            savedTests.push(test);
-            localStorage.setItem('practiceTests', JSON.stringify(savedTests));
+            flashcardSets.push(newSet);
+            localStorage.setItem('flashcardSets', JSON.stringify(flashcardSets));
             
-            // Show success message
-            alert('Practice test created successfully! It will now appear in your library and dashboard.');
+            alert('Flashcard set created successfully!');
             modal.classList.remove('active');
-            resetViews();
-            
-            // Refresh the dashboard
             loadQuizSets();
-        });
-        
-        // Cancel test
-        cancelTestBtn.addEventListener('click', () => {
-            modal.classList.remove('active');
-            resetViews();
-        });
-        
-        // Initialize event listeners for existing cards and questions
-        document.querySelectorAll('.flashcard-card').forEach(card => {
-            setupCardEventListeners(card);
-        });
-        
-        document.querySelectorAll('.question-card').forEach(question => {
-            setupQuestionEventListeners(question);
-        });
-        
-        // Initialize the first question
-        if (questionsContainer.children.length === 0) {
-            addNewQuestion();
         }
+    } catch (e) {
+        console.error('Error saving flashcard set:', e);
+        alert('An error occurred while saving the flashcard set. Please try again.');
+    }
+});
+
+// Add question button
+addQuestionButton.addEventListener('click', () => {
+    questionCounter++;
+    
+    const newQuestion = document.createElement('div');
+    newQuestion.className = 'question-card';
+    newQuestion.setAttribute('data-question-id', questionCounter);
+    
+    newQuestion.innerHTML = `
+        <div class="question-card-header">
+            <div class="question-card-number">Question ${questionCounter}</div>
+            <div class="question-card-actions">
+                <button class="btn btn-sm btn-outline delete-question" title="Delete question">
+                    <i class="icon">🗑️</i>
+                </button>
+            </div>
+        </div>
         
-        // Quiz Player Functions
+        <div class="form-group">
+            <label class="form-label" for="question-${questionCounter}-text">Question</label>
+            <input type="text" id="question-${questionCounter}-text" class="form-input question-text" placeholder="Enter your question">
+        </div>
         
-        // Open Quiz Player
-        function openQuizPlayer(quiz, mode) {
-            currentQuiz = quiz;
-            currentQuizIndex = 0;
-            quizUserAnswers = [];
-            
-            // Set title
-            quizPlayerTitle.textContent = quiz.title;
-            
-            // Set time limit (use the saved time limit or default to 30 minutes)
-            quizTimeLimit = quiz.timeLimit || 30;
-            
-            // Reset timer
-            clearInterval(quizTimer);
-            quizStartTime = Date.now();
-            updateQuizTimer();
-            quizTimer = setInterval(updateQuizTimer, 1000);
-            
-            // Show first question
-            showQuizQuestion(currentQuizIndex);
-            
-            // Update progress
-            updateQuizProgress();
-            
-            // Show modal
-            quizPlayerModal.classList.add('active');
-            
-            // Set up next button
-            quizNextBtn.textContent = 'Next';
-            quizNextBtn.onclick = handleQuizNextClick;
-        }
+        <div class="question-type-selector">
+            <label class="question-type-label">Question Type</label>
+            <div class="question-type-options">
+                <div class="question-type-option active" data-type="multiple-choice">Multiple Choice</div>
+                <div class="question-type-option" data-type="true-false">True/False</div>
+            </div>
+        </div>
         
-        // Show Quiz Question
-        function showQuizQuestion(index) {
-            const question = currentQuiz.questions[index];
-            
-            let questionHTML = `
-                <div class="quiz-question">
-                    <div class="quiz-question-text">${question.text}</div>
-                    <div class="quiz-options">
-            `;
-            
-            question.options.forEach(option => {
-                questionHTML += `
-                    <div class="quiz-option" data-letter="${option.letter}">
-                        <div class="quiz-option-letter">${option.letter}</div>
-                        <div class="quiz-option-text">${option.text}</div>
-                    </div>
-                `;
-            });
-            
-            questionHTML += `
-                    </div>
+        <div class="question-type-content multiple-choice-content">
+            <div class="multiple-choice-options">
+                <div class="multiple-choice-option">
+                    <div class="option-letter">A</div>
+                    <input type="text" class="form-input option-input" placeholder="Enter option A">
                 </div>
-            `;
+                <div class="multiple-choice-option">
+                    <div class="option-letter">B</div>
+                    <input type="text" class="form-input option-input" placeholder="Enter option B">
+                </div>
+                <div class="multiple-choice-option">
+                    <div class="option-letter">C</div>
+                    <input type="text" class="form-input option-input" placeholder="Enter option C">
+                </div>
+                <div class="multiple-choice-option">
+                    <div class="option-letter">D</div>
+                    <input type="text" class="form-input option-input" placeholder="Enter option D">
+                </div>
+            </div>
             
-            quizPlayerBody.innerHTML = questionHTML;
+            <button class="add-option-btn">
+                <i class="icon">+</i> Add Option
+            </button>
             
-            // Add event listeners to options
-            const options = quizPlayerBody.querySelectorAll('.quiz-option');
-            options.forEach(option => {
-                option.addEventListener('click', function() {
-                    // Remove selected class from all options
-                    options.forEach(opt => opt.classList.remove('selected'));
-                    
-                    // Add selected class to clicked option
-                    this.classList.add('selected');
-                    
-                    // Store user answer
-                    quizUserAnswers[currentQuizIndex] = this.getAttribute('data-letter');
+            <div class="correct-option">
+                <label class="correct-option-label" for="question-${questionCounter}-correct">Correct Answer:</label>
+                <select id="question-${questionCounter}-correct" class="form-input">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="question-type-content true-false-content" style="display: none;">
+            <div class="true-false-options">
+                <div class="true-false-option selected" data-value="true">True</div>
+                <div class="true-false-option" data-value="false">False</div>
+            </div>
+        </div>
+    `;
+    
+    questionsContainer.appendChild(newQuestion);
+    setupQuestionEventListeners(newQuestion);
+});
+
+// Setup question event listeners
+function setupQuestionEventListeners(question) {
+    const deleteBtn = question.querySelector('.delete-question');
+    const typeOptions = question.querySelectorAll('.question-type-option');
+    const multipleChoiceContent = question.querySelector('.multiple-choice-content');
+    const trueFalseContent = question.querySelector('.true-false-content');
+    const addOptionBtn = question.querySelector('.add-option-btn');
+    const trueFalseOptions = question.querySelectorAll('.true-false-option');
+    
+    deleteBtn.addEventListener('click', () => {
+        if (questionsContainer.querySelectorAll('.question-card').length > 1) {
+            question.remove();
+            updateQuestionNumbers();
+        } else {
+            alert('You must have at least one question in the test.');
+        }
+    });
+    
+    typeOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            // Remove active class from all options
+            typeOptions.forEach(opt => opt.classList.remove('active'));
+            
+            // Add active class to clicked option
+            option.classList.add('active');
+            
+            // Show/hide content based on selected type
+            const type = option.getAttribute('data-type');
+            
+            if (type === 'multiple-choice') {
+                multipleChoiceContent.style.display = 'block';
+                trueFalseContent.style.display = 'none';
+            } else if (type === 'true-false') {
+                multipleChoiceContent.style.display = 'none';
+                trueFalseContent.style.display = 'block';
+            }
+        });
+    });
+    
+    addOptionBtn.addEventListener('click', () => {
+        const optionsContainer = question.querySelector('.multiple-choice-options');
+        const options = optionsContainer.querySelectorAll('.multiple-choice-option');
+        
+        if (options.length >= 6) {
+            alert('You can add a maximum of 6 options.');
+            return;
+        }
+        
+        const newOptionLetter = String.fromCharCode(65 + options.length); // A, B, C, ...
+        
+        const newOption = document.createElement('div');
+        newOption.className = 'multiple-choice-option';
+        
+        newOption.innerHTML = `
+            <div class="option-letter">${newOptionLetter}</div>
+            <input type="text" class="form-input option-input" placeholder="Enter option ${newOptionLetter}">
+        `;
+        
+        optionsContainer.appendChild(newOption);
+        
+        // Add new option to correct answer dropdown
+        const correctAnswerSelect = question.querySelector('select');
+        const newOptionElement = document.createElement('option');
+        newOptionElement.value = newOptionLetter;
+        newOptionElement.textContent = newOptionLetter;
+        correctAnswerSelect.appendChild(newOptionElement);
+    });
+    
+    trueFalseOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            // Remove selected class from all options
+            trueFalseOptions.forEach(opt => opt.classList.remove('selected'));
+
+            // Add selected class to clicked option
+            option.classList.add('selected');
+
+            // Update correct answer value
+            question.dataset.correctAnswer = option.dataset.value;
+        });
+    });
+}
+
+// Update question numbers
+function updateQuestionNumbers() {
+    const questions = questionsContainer.querySelectorAll('.question-card');
+    questions.forEach((question, index) => {
+        const questionNumber = question.querySelector('.question-card-number');
+        questionNumber.textContent = `Question ${index + 1}`;
+        question.setAttribute('data-question-id', index + 1);
+    });
+}
+
+// Create test
+createTestBtn.addEventListener('click', () => {
+    const title = document.getElementById('test-title').value.trim();
+    const description = document.getElementById('test-description').value.trim();
+    const timeLimit = parseInt(document.getElementById('test-timer-minutes').value);
+
+    if (!title) {
+        alert('Please enter a title for your practice test.');
+        return;
+    }
+
+    const questions = [];
+    const questionElements = questionsContainer.querySelectorAll('.question-card');
+
+    let hasEmptyFields = false;
+
+    questionElements.forEach((question, index) => {
+        const questionText = question.querySelector('.question-text').value.trim();
+        const questionType = question.querySelector('.question-type-option.active').dataset.type;
+
+        if (!questionText) {
+            hasEmptyFields = true;
+            return;
+        }
+
+        let questionData = {
+            id: index + 1,
+            text: questionText,
+            type: questionType
+        };
+
+        if (questionType === 'multiple-choice') {
+            const optionElements = question.querySelectorAll('.multiple-choice-option');
+            const options = [];
+
+            optionElements.forEach(optionElement => {
+                const optionText = optionElement.querySelector('.option-input').value.trim();
+                const optionLetter = optionElement.querySelector('.option-letter').textContent;
+
+                if (!optionText) {
+                    hasEmptyFields = true;
+                    return;
+                }
+
+                options.push({
+                    letter: optionLetter,
+                    text: optionText
                 });
             });
+
+            const correctAnswerSelect = question.querySelector('select');
+            const correctAnswer = correctAnswerSelect.value;
+
+            questionData.options = options;
+            questionData.correctAnswer = correctAnswer;
+        } else if (questionType === 'true-false') {
+            questionData.correctAnswer = question.dataset.correctAnswer === 'true' ? 'A' : 'B';
+            questionData.options = [
+                { letter: 'A', text: 'True' },
+                { letter: 'B', text: 'False' }
+            ];
         }
-        
-        // Update Quiz Timer
-        function updateQuizTimer() {
-            const elapsedTime = Math.floor((Date.now() - quizStartTime) / 1000);
-            const totalSeconds = quizTimeLimit * 60;
-            const remainingSeconds = Math.max(0, totalSeconds - elapsedTime);
-            
-            const minutes = Math.floor(remainingSeconds / 60).toString().padStart(2, '0');
-            const seconds = (remainingSeconds % 60).toString().padStart(2, '0');
-            quizTimerDisplay.textContent = `${minutes}:${seconds}`;
-            
-            // Check if time is up
-            if (remainingSeconds === 0) {
-                clearInterval(quizTimer);
-                showQuizResults();
-            }
-        }
-        
-        // Update Quiz Progress
-        function updateQuizProgress() {
-            const progress = ((currentQuizIndex + 1) / currentQuiz.questions.length) * 100;
-            quizProgressFill.style.width = `${progress}%`;
-            quizProgressText.textContent = `${currentQuizIndex + 1}/${currentQuiz.questions.length}`;
-        }
-        
-        // Handle Quiz Next Click
-        function handleQuizNextClick() {
-            // Check if user has selected an answer
-            if (!quizUserAnswers[currentQuizIndex]) {
-                alert('Please select an answer before proceeding.');
-                return;
-            }
-            
-            currentQuizIndex++;
-            
-            // Check if we've reached the end of the quiz
-            if (currentQuizIndex >= currentQuiz.questions.length) {
-                showQuizResults();
-                return;
-            }
-            
-            // Show next question
-            showQuizQuestion(currentQuizIndex);
-            
-            // Update progress
-            updateQuizProgress();
-        }
-        
-        // Show Quiz Results
-        function showQuizResults() {
-            // Stop timer
-            clearInterval(quizTimer);
-            
-            // Calculate score
-            let correctAnswers = 0;
-            quizUserAnswers.forEach((answer, index) => {
-                if (answer === currentQuiz.questions[index].correctAnswer) {
-                    correctAnswers++;
+
+        questions.push(questionData);
+    });
+
+    if (hasEmptyFields) {
+        alert('Please fill in all question and option fields.');
+        return;
+    }
+
+    if (questions.length === 0) {
+        alert('Please add at least one question to your practice test.');
+        return;
+    }
+
+    try {
+        // Check if we're editing an existing test
+        const editId = createTestBtn.getAttribute('data-edit-id');
+
+        if (editId) {
+            // Update existing test
+            let practiceTests = [];
+            const savedPracticeTests = localStorage.getItem('practiceTests');
+
+            if (savedPracticeTests) {
+                practiceTests = JSON.parse(savedPracticeTests);
+
+                // Find the test to update
+                const testIndex = practiceTests.findIndex(test => test.created_at === parseInt(editId));
+
+                if (testIndex !== -1) {
+                    // Update the test
+                    practiceTests[testIndex] = {
+                        ...practiceTests[testIndex],
+                        title,
+                        description,
+                        timeLimit,
+                        questions,
+                        updated_at: Date.now()
+                    };
+
+                    localStorage.setItem('practiceTests', JSON.stringify(practiceTests));
+
+                    alert('Practice test updated successfully!');
+                    modal.classList.remove('active');
+                    loadQuizSets();
+                } else {
+                    alert('Could not find the practice test to update.');
                 }
-            });
-            
-            const score = Math.round((correctAnswers / currentQuiz.questions.length) * 100);
-            
-            // Save score to localStorage
-            quizScores[currentQuiz.created_at] = score;
-            localStorage.setItem('quizScores', JSON.stringify(quizScores));
-            
-            // Generate resultsHTML
-            let resultsHTML = `
-                <div class="quiz-result">
-                    <div class="quiz-result-icon">🏆</div>
-                    <h3 class="quiz-result-title">Quiz Completed!</h3>
-                    <div class="quiz-result-score">${score}%</div>
-                    <p class="quiz-result-message">You got ${correctAnswers} out of ${currentQuiz.questions.length} questions correct.</p>
-                    <button class="btn btn-primary" id="quiz-review-btn">Review Answers</button>
-                </div>
-            `;
-            
-            quizPlayerBody.innerHTML = resultsHTML;
-            
-            // Update next button
-            quizNextBtn.textContent = 'Close';
-            quizNextBtn.onclick = function() {
-                quizPlayerModal.classList.remove('active');
-                // Refresh dashboard to show updated mastered percentage
-                loadQuizSets();
+            }
+        } else {
+            // Create new test
+            const newTest = {
+                created_at: Date.now(),
+                title,
+                description,
+                timeLimit,
+                questions
             };
-            
-            // Add event listener to review button
-            document.getElementById('quiz-review-btn').addEventListener('click', showQuizReview);
-        }
-        
-        // Show Quiz Review
-        function showQuizReview() {
-            let reviewHTML = `<div class="quiz-review">`;
-            
-            currentQuiz.questions.forEach((question, index) => {
-                const userAnswer = quizUserAnswers[index];
-                const isCorrect = userAnswer === question.correctAnswer;
-                
-                reviewHTML += `
-                    <div class="quiz-question">
-                        <div class="quiz-question-text">${index + 1}. ${question.text}</div>
-                        <div class="quiz-options">
-                `;
-                
-                question.options.forEach(option => {
-                    let optionClass = '';
-                    
-                    if (option.letter === question.correctAnswer) {
-                        optionClass = 'correct';
-                    } else if (option.letter === userAnswer && !isCorrect) {
-                        optionClass = 'incorrect';
-                    }
-                    
-                    reviewHTML += `
-                        <div class="quiz-option ${optionClass}" data-letter="${option.letter}">
-                            <div class="quiz-option-letter">${option.letter}</div>
-                            <div class="quiz-option-text">${option.text}</div>
-                        </div>
-                    `;
-                });
-                
-                reviewHTML += `
-                        </div>
-                    </div>
-                `;
-            });
-            
-            reviewHTML += `</div>`;
-            
-            quizPlayerBody.innerHTML = reviewHTML;
-        }
-        
-        // Close Quiz Player
-        quizPlayerClose.addEventListener('click', function() {
-            quizPlayerModal.classList.remove('active');
-            clearInterval(quizTimer);
-            // Refresh dashboard to show updated mastered percentage
-            loadQuizSets();
-        });
-        
-        // Flashcard Player Functions
-        
-        // Open Flashcard Player
-        function openFlashcardPlayer(flashcardSet, mode) {
-            currentFlashcardSet = flashcardSet;
-            currentFlashcardIndex = 0;
-            isFlashcardFlipped = false;
-            
-            // Set title
-            flashcardPlayerTitle.textContent = flashcardSet.title;
-            
-            // Initialize mastery data for this set if it doesn't exist
-            if (!flashcardMasteryData[flashcardSet.created_at]) {
-                flashcardMasteryData[flashcardSet.created_at] = {};
+
+            let practiceTests = [];
+            const savedPracticeTests = localStorage.getItem('practiceTests');
+
+            if (savedPracticeTests) {
+                practiceTests = JSON.parse(savedPracticeTests);
             }
-            
-            // Show first flashcard
-            showFlashcard(currentFlashcardIndex);
-            
-            // Update progress
-            updateFlashcardProgress();
-            
-            // Reset mastery toggle
+
+            practiceTests.push(newTest);
+            localStorage.setItem('practiceTests', JSON.stringify(practiceTests));
+
+            alert('Practice test created successfully!');
+            modal.classList.remove('active');
+            loadQuizSets();
+        }
+    } catch (e) {
+        console.error('Error saving practice test:', e);
+        alert('An error occurred while saving the practice test. Please try again.');
+    }
+});
+
+// Flashcard Player Functions
+function openFlashcardPlayer(flashcardSet, mode) {
+    console.log('Opening flashcard player with set:', flashcardSet);
+    
+    if (!flashcardSet || !flashcardSet.cards || flashcardSet.cards.length === 0) {
+        alert('Error: This flashcard set has no cards. Please edit the set to add cards.');
+        return;
+    }
+    
+    try {
+        currentFlashcardSet = flashcardSet;
+        currentFlashcardIndex = 0;
+        isFlashcardFlipped = false;
+        
+        // Set title
+        flashcardPlayerTitle.textContent = flashcardSet.title || 'Untitled Flashcard Set';
+        
+        // Show first card
+        showFlashcard(currentFlashcardIndex);
+        
+        // Update progress
+        updateFlashcardProgress();
+        
+        // Check if mastery tracking is enabled for this set
+        const setId = flashcardSet.created_at;
+        if (flashcardMasteryData[setId] && flashcardMasteryData[setId].trackingEnabled) {
+            masteryToggleCheckbox.checked = true;
+            masteryButtons.style.display = 'flex';
+            document.querySelector('.flashcard-controls').style.display = 'none';
+        } else {
             masteryToggleCheckbox.checked = false;
             masteryButtons.style.display = 'none';
-            
-            // Show modal
-            flashcardPlayerModal.classList.add('active');
+            document.querySelector('.flashcard-controls').style.display = 'flex';
         }
         
-        // Show Flashcard
-        function showFlashcard(index) {
-            const card = currentFlashcardSet.cards[index];
-            
-            let flashcardHTML = `
-                <div class="flashcard-player">
-                    <div class="flashcard-inner" id="flashcard-inner">
-                        <div class="flashcard-front">
-                            <div class="flashcard-text">${card.term}</div>
-                            <div class="flashcard-hint">Click to flip</div>
-                        </div>
-                        <div class="flashcard-back">
-                            <div class="flashcard-text">${card.definition}</div>
-                            <div class="flashcard-hint">Click to flip back</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            flashcardPlayerBody.innerHTML = flashcardHTML;
-            
-            // Add event listener to flip card
-            const flashcardInner = document.getElementById('flashcard-inner');
-            flashcardInner.addEventListener('click', function() {
-                this.classList.toggle('flipped');
-                isFlashcardFlipped = !isFlashcardFlipped;
-            });
-        }
+        // Show modal
+        flashcardPlayerModal.classList.add('active');
         
-        // Update Flashcard Progress
-        function updateFlashcardProgress() {
-            const progress = ((currentFlashcardIndex + 1) / currentFlashcardSet.cards.length) * 100;
-            flashcardProgressFill.style.width = `${progress}%`;
-            flashcardCounter.textContent = `${currentFlashcardIndex + 1}/${currentFlashcardSet.cards.length}`;
-        }
-        
-        // Mark card mastery
-        function markCardMastery(mastered) {
-            const cardId = currentFlashcardSet.cards[currentFlashcardIndex].id.toString();
-            flashcardMasteryData[currentFlashcardSet.created_at][cardId] = mastered;
-            localStorage.setItem('flashcardMasteryData', JSON.stringify(flashcardMasteryData));
-        }
-        
-        // Move to next card
-        function moveToNextCard() {
-            if (currentFlashcardIndex < currentFlashcardSet.cards.length - 1) {
-                currentFlashcardIndex++;
-                isFlashcardFlipped = false;
-                showFlashcard(currentFlashcardIndex);
-                updateFlashcardProgress();
-            } else {
-                // End of deck
-                alert('You have completed this flashcard set!');
-                flashcardPlayerModal.classList.remove('active');
-                loadQuizSets(); // Refresh dashboard to show updated mastery
-            }
-        }
-        
-        // Flashcard Player Controls
-        flashcardPrevBtn.addEventListener('click', function() {
+        // Set up event listeners
+        flashcardFlipBtn.onclick = flipFlashcard;
+        flashcardPrevBtn.onclick = function() {
             if (currentFlashcardIndex > 0) {
                 currentFlashcardIndex--;
                 isFlashcardFlipped = false;
                 showFlashcard(currentFlashcardIndex);
                 updateFlashcardProgress();
             }
-        });
-        
-        flashcardNextBtn.addEventListener('click', function() {
+        };
+        flashcardNextBtn.onclick = function() {
             moveToNextCard();
+        };
+    } catch (error) {
+        console.error('Error in openFlashcardPlayer:', error);
+        alert('An error occurred while loading the flashcards. Please try again.');
+    }
+}
+
+function showFlashcard(index) {
+    if (!currentFlashcardSet || !currentFlashcardSet.cards || index >= currentFlashcardSet.cards.length) {
+        console.error('Invalid flashcard set or card index');
+        return;
+    }
+    
+    const card = currentFlashcardSet.cards[index];
+    
+    let flashcardHTML = `
+        <div class="flashcard-player">
+            <div class="flashcard-inner ${isFlashcardFlipped ? 'flipped' : ''}">
+                <div class="flashcard-front">
+                    <div class="flashcard-text">${card.term || 'No term'}</div>
+                    <div class="flashcard-hint">Click to flip</div>
+                </div>
+                <div class="flashcard-back">
+                    <div class="flashcard-text">${card.definition || 'No definition'}</div>
+                    <div class="flashcard-hint">Click to flip back</div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    flashcardPlayerBody.innerHTML = flashcardHTML;
+    
+    // Add click event to flip card
+    const flashcardInner = flashcardPlayerBody.querySelector('.flashcard-inner');
+    if (flashcardInner) {
+        flashcardInner.addEventListener('click', flipFlashcard);
+    }
+}
+
+function flipFlashcard() {
+    isFlashcardFlipped = !isFlashcardFlipped;
+    const flashcardInner = flashcardPlayerBody.querySelector('.flashcard-inner');
+    if (flashcardInner) {
+        if (isFlashcardFlipped) {
+            flashcardInner.classList.add('flipped');
+        } else {
+            flashcardInner.classList.remove('flipped');
+        }
+    }
+}
+
+function updateFlashcardProgress() {
+    if (!currentFlashcardSet || !currentFlashcardSet.cards) {
+        return;
+    }
+    
+    const progress = ((currentFlashcardIndex + 1) / currentFlashcardSet.cards.length) * 100;
+    flashcardProgressFill.style.width = `${progress}%`;
+    flashcardCounter.textContent = `${currentFlashcardIndex + 1}/${currentFlashcardSet.cards.length}`;
+    
+    // Disable/enable prev button
+    flashcardPrevBtn.disabled = currentFlashcardIndex === 0;
+    
+    // Update next button text for last card
+    if (currentFlashcardIndex === currentFlashcardSet.cards.length - 1) {
+        flashcardNextBtn.textContent = 'Finish';
+    } else {
+        flashcardNextBtn.textContent = 'Next';
+        flashcardNextBtn.innerHTML = `Next <i class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+        </i>`;
+    }
+}
+
+function moveToNextCard() {
+    currentFlashcardIndex++;
+    
+    // Check if we've reached the end of the flashcards
+    if (currentFlashcardIndex >= currentFlashcardSet.cards.length) {
+        showFlashcardComplete();
+        return;
+    }
+    
+    // Show next card
+    isFlashcardFlipped = false;
+    showFlashcard(currentFlashcardIndex);
+    
+    // Update progress
+    updateFlashcardProgress();
+}
+
+function showFlashcardComplete() {
+    let completionHTML = `
+        <div class="quiz-result">
+            <div class="quiz-result-icon">🎉</div>
+            <h3 class="quiz-result-title">Set Completed!</h3>
+            <p class="quiz-result-message">You've gone through all the flashcards in this set.</p>
+            <button class="btn btn-primary" id="flashcard-restart-btn">Start Over</button>
+        </div>
+    `;
+    
+    flashcardPlayerBody.innerHTML = completionHTML;
+    
+    // Add event listener to restart button
+    document.getElementById('flashcard-restart-btn').addEventListener('click', function() {
+        currentFlashcardIndex = 0;
+        isFlashcardFlipped = false;
+        showFlashcard(currentFlashcardIndex);
+        updateFlashcardProgress();
+    });
+}
+
+function markCardMastery(isMastered) {
+    if (!currentFlashcardSet) return;
+    
+    const setId = currentFlashcardSet.created_at;
+    const cardIndex = currentFlashcardIndex;
+    
+    if (!flashcardMasteryData[setId]) {
+        flashcardMasteryData[setId] = { trackingEnabled: true };
+    }
+    
+    flashcardMasteryData[setId][cardIndex] = isMastered;
+    localStorage.setItem('flashcardMasteryData', JSON.stringify(flashcardMasteryData));
+    
+    // Update the mastery button UI
+    if (isMastered) {
+        masteryCheckBtn.classList.add('active');
+        masteryCrossBtn.classList.remove('active');
+    } else {
+        masteryCrossBtn.classList.add('active');
+        masteryCheckBtn.classList.remove('active');
+    }
+}
+
+// Update Quiz Timer
+function updateQuizTimer() {
+    const elapsedTime = Math.floor((Date.now() - quizStartTime) / 1000);
+    const totalSeconds = quizTimeLimit * 60;
+    const remainingSeconds = Math.max(0, totalSeconds - elapsedTime);
+
+    const minutes = Math.floor(remainingSeconds / 60).toString().padStart(2, '0');
+    const seconds = (remainingSeconds % 60).toString().padStart(2, '0');
+    quizTimerDisplay.textContent = `${minutes}:${seconds}`;
+
+    // Check if time is up
+    if (remainingSeconds === 0) {
+        clearInterval(quizTimer);
+        showQuizResults();
+    }
+}
+
+// Show Quiz Question
+function showQuizQuestion(index) {
+    if (!currentQuiz || !currentQuiz.questions || index >= currentQuiz.questions.length) {
+        console.error('Invalid quiz or question index');
+        return;
+    }
+
+    const question = currentQuiz.questions[index];
+
+    let questionHTML = `
+        <div class="quiz-question">
+            <div class="quiz-question-text">${question.text || 'No question text'}</div>
+            <div class="quiz-options">
+    `;
+
+    if (question.options && Array.isArray(question.options)) {
+        question.options.forEach(option => {
+            const isSelected = quizUserAnswers[index] === option.letter;
+            questionHTML += `
+                <div class="quiz-option ${isSelected ? 'selected' : ''}" data-letter="${option.letter}">
+                    <div class="quiz-option-letter">${option.letter}</div>
+                    <div class="quiz-option-text">${option.text || 'No option text'}</div>
+                </div>
+            `;
+        });
+    } else {
+        questionHTML += `<div class="quiz-option">No options available</div>`;
+    }
+
+    questionHTML += `
+            </div>
+        </div>
+    `;
+
+    quizPlayerBody.innerHTML = questionHTML;
+
+    // Add event listeners to options
+    const options = quizPlayerBody.querySelectorAll('.quiz-option');
+    options.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove selected class from all options
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selected class to clicked option
+            this.classList.add('selected');
+            
+            // Store user answer
+            quizUserAnswers[currentQuizIndex] = this.getAttribute('data-letter');
+        });
+    });
+}
+
+// Update Quiz Progress
+function updateQuizProgress() {
+    if (!currentQuiz || !currentQuiz.questions) {
+        return;
+    }
+
+    const progress = ((currentQuizIndex + 1) / currentQuiz.questions.length) * 100;
+    quizProgressFill.style.width = `${progress}%`;
+    quizProgressText.textContent = `${currentQuizIndex + 1}/${currentQuiz.questions.length}`;
+}
+
+// Handle Quiz Next Click
+function handleQuizNextClick() {
+    // Check if user has selected an answer
+    if (!quizUserAnswers[currentQuizIndex]) {
+        alert('Please select an answer before proceeding.');
+        return;
+    }
+
+    currentQuizIndex++;
+
+    // Check if we've reached the end of the quiz
+    if (currentQuizIndex >= currentQuiz.questions.length) {
+        showQuizResults();
+        return;
+    }
+
+    // Show next question
+    showQuizQuestion(currentQuizIndex);
+
+    // Update progress
+    updateQuizProgress();
+}
+
+// Show Quiz Results
+function showQuizResults() {
+    // Stop timer
+    clearInterval(quizTimer);
+
+    // Calculate score
+    let correctAnswers = 0;
+    quizUserAnswers.forEach((answer, index) => {
+        if (currentQuiz.questions[index] && answer === currentQuiz.questions[index].correctAnswer) {
+            correctAnswers++;
+        }
+    });
+
+    const score = Math.round((correctAnswers / currentQuiz.questions.length) * 100);
+
+    // Save score to localStorage
+    quizScores[currentQuiz.created_at] = score;
+    localStorage.setItem('quizScores', JSON.stringify(quizScores));
+
+    // Generate resultsHTML
+    let resultsHTML = `
+        <div class="quiz-result">
+            <div class="quiz-result-icon">🏆</div>
+            <h3 class="quiz-result-title">Quiz Completed!</h3>
+            <div class="quiz-result-score">${score}%</div>
+            <p class="quiz-result-message">You got ${correctAnswers} out of ${currentQuiz.questions.length} questions correct.</p>
+            <button class="btn btn-primary" id="quiz-review-btn">Review Answers</button>
+        </div>
+    `;
+
+    quizPlayerBody.innerHTML = resultsHTML;
+
+    // Update next button
+    quizNextBtn.textContent = 'Close';
+    quizNextBtn.onclick = function() {
+        quizPlayerModal.classList.remove('active');
+        // Refresh dashboard to show updated mastered percentage
+        loadQuizSets();
+    };
+
+    // Add event listener to review button
+    document.getElementById('quiz-review-btn').addEventListener('click', showQuizReview);
+}
+
+// Show Quiz Review
+function showQuizReview() {
+    let reviewHTML = `<div class="quiz-review">`;
+
+    currentQuiz.questions.forEach((question, index) => {
+        const userAnswer = quizUserAnswers[index];
+        const isCorrect = userAnswer === question.correctAnswer;
+        
+        reviewHTML += `
+            <div class="quiz-question">
+                <div class="quiz-question-text">${index + 1}. ${question.text}</div>
+                <div class="quiz-options">
+        `;
+        
+        question.options.forEach(option => {
+            let optionClass = '';
+            
+            if (option.letter === question.correctAnswer) {
+                optionClass = 'correct';
+            } else if (option.letter === userAnswer && !isCorrect) {
+                optionClass = 'incorrect';
+            }
+            
+            reviewHTML += `
+                <div class="quiz-option ${optionClass}" data-letter="${option.letter}">
+                    <div class="quiz-option-letter">${option.letter}</div>
+                    <div class="quiz-option-text">${option.text}</div>
+                </div>
+            `;
         });
         
-        flashcardFlipBtn.addEventListener('click', function() {
-            const flashcardInner = document.getElementById('flashcard-inner');
-            flashcardInner.classList.toggle('flipped');
-            isFlashcardFlipped = !isFlashcardFlipped;
-        });
+        reviewHTML += `
+                </div>
+            </div>
+        `;
+    });
+
+    reviewHTML += `</div>`;
+
+    quizPlayerBody.innerHTML = reviewHTML;
+}
+
+function openQuizPlayer(quiz, mode) {
+    console.log('Opening quiz player with quiz:', quiz);
+
+    if (!quiz || !quiz.questions || quiz.questions.length === 0) {
+        alert('Error: This quiz has no questions. Please edit the quiz to add questions.');
+        return;
+    }
+
+    try {
+        currentQuiz = quiz;
+        currentQuizIndex = 0;
+        quizUserAnswers = Array(quiz.questions.length).fill(null);
         
-        // Close Flashcard Player
-        flashcardPlayerClose.addEventListener('click', function() {
-            flashcardPlayerModal.classList.remove('active');
-            loadQuizSets(); // Refresh dashboard to show updated mastery
-        });
-    </script>
+        // Set title
+        quizPlayerTitle.textContent = quiz.title || 'Untitled Quiz';
+        
+        // Set time limit (use the saved time limit or default to 30 minutes)
+        quizTimeLimit = quiz.timeLimit || 30;
+        
+        // Reset timer
+        if (quizTimer) {
+            clearInterval(quizTimer);
+        }
+        quizStartTime = Date.now();
+        updateQuizTimer();
+        quizTimer = setInterval(updateQuizTimer, 1000);
+        
+        // Show first question
+        showQuizQuestion(currentQuizIndex);
+        
+        // Update progress
+        updateQuizProgress();
+        
+        // Show modal
+        quizPlayerModal.classList.add('active');
+        
+        // Set up next button
+        quizNextBtn.textContent = 'Next';
+        quizNextBtn.onclick = handleQuizNextClick;
+    } catch (error) {
+        console.error('Error in openQuizPlayer:', error);
+        alert('An error occurred while loading the quiz. Please try again.');
+    }
+}
+
+// Close modal
+closeBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+});
+
+// Close quiz player
+quizPlayerClose.addEventListener('click', function() {
+    quizPlayerModal.classList.remove('active');
+    if (window.quizTimer) {
+        clearInterval(window.quizTimer);
+    }
+    // Refresh dashboard to show updated mastery
+    loadQuizSets();
+});
+
+// Close flashcard player
+flashcardPlayerClose.addEventListener('click', function() {
+    flashcardPlayerModal.classList.remove('active');
+    // Refresh dashboard to show updated mastery
+    loadQuizSets();
+});
+
+// Utility: Delegate event for dynamic elements
+function delegate(parent, selector, type, handler) {
+    parent.addEventListener(type, function(event) {
+        let target = event.target;
+        while (target && target !== parent) {
+            if (target.matches(selector)) {
+                handler.call(target, event);
+                break;
+            }
+            target = target.parentElement;
+        }
+    });
+}
+
+// Setup event delegation for dynamic flashcard and question controls
+document.addEventListener('DOMContentLoaded', function() {
+    // Delegate flashcard card controls
+    delegate(flashcardCardsContainer, '.delete-card', 'click', function() {
+        // Implementation for delete card
+    });
+});
+
+</script>
 </body>
 </html>
